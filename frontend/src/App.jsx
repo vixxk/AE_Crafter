@@ -17,7 +17,7 @@ import FloorPlan3D from './components/FloorPlan3D';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
-const VITE_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const VITE_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const GENERATE_URL = `${VITE_API_URL}/api/generate`;
 const AI_GENERATE_URL = `${VITE_API_URL}/api/ai-generate`;
 
