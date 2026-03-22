@@ -2,7 +2,7 @@ import React from 'react';
 import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva';
 
 const FEET_TO_PX = 20;
-const GRID_SIZE = FEET_TO_PX; // 1ft = 20px grid
+const GRID_SIZE = FEET_TO_PX;
 
 const FloorPlan2D = ({ layout, onRoomUpdate }) => {
   if (!layout || !layout.rooms) return null;
@@ -12,12 +12,10 @@ const FloorPlan2D = ({ layout, onRoomUpdate }) => {
 
   const handleDragEnd = (e, roomId) => {
     const node = e.target;
-    // Snap to grid
     const newX = Math.round(node.x() / GRID_SIZE) * GRID_SIZE;
     const newY = Math.round(node.y() / GRID_SIZE) * GRID_SIZE;
 
     const room = rooms.find((r) => r.id === roomId);
-    // Boundary constraints within setbacks
     const finalX = Math.max(setbacks.left * FEET_TO_PX, Math.min(newX, (plot.width - setbacks.right - room.width) * FEET_TO_PX));
     const finalY = Math.max(setbacks.top * FEET_TO_PX, Math.min(newY, (plot.height - setbacks.bottom - room.height) * FEET_TO_PX));
 
@@ -43,8 +41,6 @@ const FloorPlan2D = ({ layout, onRoomUpdate }) => {
     }
   };
 
-  // Scaling logic
-  // Scaling logic for fitting the whole plot on screen
   const stageWidth = window.innerWidth - 450;
   const stageHeight = window.innerHeight - 150;
   const plotPxWidth = plot.width * FEET_TO_PX;
@@ -61,7 +57,6 @@ const FloorPlan2D = ({ layout, onRoomUpdate }) => {
         draggable
       >
         <Layer>
-          {/* Plot Boundary */}
           <Rect
             x={0}
             y={0}
@@ -75,7 +70,6 @@ const FloorPlan2D = ({ layout, onRoomUpdate }) => {
             shadowOpacity={0.05}
           />
 
-          {/* Building Setback Indicator */}
           <Rect
             x={setbacks.left * FEET_TO_PX}
             y={setbacks.top * FEET_TO_PX}
@@ -87,7 +81,6 @@ const FloorPlan2D = ({ layout, onRoomUpdate }) => {
             fill="rgba(59, 130, 246, 0.02)"
           />
 
-          {/* Orientation Arrow/Label */}
           <Text
             text={`N ↑ (${plot.orientation})`}
             x={plot.width * FEET_TO_PX - 80}
@@ -97,10 +90,9 @@ const FloorPlan2D = ({ layout, onRoomUpdate }) => {
             fill="var(--text-muted)"
           />
 
-          {/* Grid Lines */}
           {Array.from({ length: Math.ceil((plot.width * FEET_TO_PX) / GRID_SIZE) + 1 }).map((_, i) => (
             <Line
-              key={`v-${i}`}
+               key={`v-${i}`}
               points={[i * GRID_SIZE, 0, i * GRID_SIZE, plot.height * FEET_TO_PX]}
               stroke="#e2e8f0"
               strokeWidth={1}
@@ -108,7 +100,6 @@ const FloorPlan2D = ({ layout, onRoomUpdate }) => {
             />
           ))}
 
-          {/* Rooms */}
           {rooms.map((room) => (
             <Group
               key={room.id}
@@ -165,3 +156,4 @@ const FloorPlan2D = ({ layout, onRoomUpdate }) => {
 };
 
 export default FloorPlan2D;
+

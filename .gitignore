@@ -21,3 +21,4 @@ yarn-error.log*
 # Project specific
 .antigravity/
 .gemini/
+README.md

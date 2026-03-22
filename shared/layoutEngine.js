@@ -1,8 +1,3 @@
-/**
- * Core layout generation logic for the floor plan generator.
- * This is a deterministic algorithm that places rooms in a grid-like or row-wise manner.
- */
-
 const ROOM_TYPES = {
   BEDROOM: 'bedroom',
   LIVING_ROOM: 'living room',
@@ -16,12 +11,8 @@ const ROOM_TYPES = {
 };
 
 const DEFAULT_MIN_SIZE = 3;
-const DEFAULT_MARGIN = 0.5; // Reduced for precision
+const DEFAULT_MARGIN = 0.5;
 
-/**
- * Generates a floor plan layout based on user input.
- * Now supports real-life constraints like setbacks and orientation.
- */
 function generateLayout(input) {
   const { 
     plot, 
@@ -32,7 +23,6 @@ function generateLayout(input) {
   
   const { width: plotWidth, height: plotHeight } = plot;
 
-  // Calculate effective building area
   const startX = setbacks.left;
   const startY = setbacks.top;
   const buildWidth = plotWidth - setbacks.left - setbacks.right;
@@ -42,7 +32,6 @@ function generateLayout(input) {
     throw new Error('Building area too small after applying setbacks.');
   }
 
-  // 1. Prepare rooms
   const roomsToPlace = inputRooms.map((room, index) => ({
     id: room.id || `room-${index}`,
     type: room.type || ROOM_TYPES.BEDROOM,
@@ -52,24 +41,19 @@ function generateLayout(input) {
     isAttached: room.isAttached || false
   }));
 
-  // 2. Sequential placement algorithm (Row-wise within setbacks)
   const placedRooms = [];
   let currentX = startX;
   let currentY = startY;
   let maxRowHeight = 0;
 
   for (const room of roomsToPlace) {
-    // Check if room fits in the current row width
     if (currentX + room.width > startX + buildWidth) {
-      // Move to a new row
       currentX = startX;
       currentY += maxRowHeight + DEFAULT_MARGIN;
       maxRowHeight = 0;
     }
 
-    // Check if it fits in the plot height
     if (currentY + room.height > startY + buildHeight) {
-      // Dynamic scaling to fit plot if possible
       room.height = Math.max(startY + buildHeight - currentY, DEFAULT_MIN_SIZE);
     }
 
@@ -78,7 +62,6 @@ function generateLayout(input) {
 
     placedRooms.push(room);
 
-    // Update state for next room
     currentX += room.width + DEFAULT_MARGIN;
     maxRowHeight = Math.max(maxRowHeight, room.height);
   }
@@ -95,3 +78,4 @@ module.exports = {
   generateLayout,
   ROOM_TYPES
 };
+
