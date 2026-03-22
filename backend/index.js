@@ -64,7 +64,11 @@ function resolveOverlaps(rooms, plot, setbacks) {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: process.env.FRONTEND_URL || "*" }));
+let frontendOrigin = process.env.FRONTEND_URL || "*";
+if (frontendOrigin !== "*" && frontendOrigin.endsWith('/')) {
+  frontendOrigin = frontendOrigin.slice(0, -1);
+}
+app.use(cors({ origin: frontendOrigin }));
 app.use(bodyParser.json());
 
 
