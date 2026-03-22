@@ -45,6 +45,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
 
   const [aiPrompt, setAiPrompt] = useState('A 3BHK modern villa with an open kitchen, large living room facing North, and a master bedroom with attached balcony.');
 
+
   const handleAddRoom = () => {
     setRooms([
       ...rooms,
@@ -64,6 +65,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
   const handleAIGenerate = () => {
     onGenerate({ plot, prompt: aiPrompt, setbacks, orientation }, true);
   };
+
 
   return (
     <div className="sidebar">
@@ -141,6 +143,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
               value={plot.width * plot.height}
               onChange={(e) => {
                 const area = Number(e.target.value);
+
                 const w = Math.sqrt(area * 1.25);
                 const h = area / w;
                 setPlot({ width: Math.round(w), height: Math.round(h) });
@@ -255,7 +258,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
           </button>
         ) : (
           <button
-            className={`btn btn-primary`}
+            className="btn btn-primary"
             onClick={handleAIGenerate}
             disabled={isGenerating}
             style={{ position: 'relative', overflow: 'hidden' }}
@@ -277,4 +280,3 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
 };
 
 export default FloorPlanForm;
-

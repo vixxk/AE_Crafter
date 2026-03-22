@@ -17,9 +17,9 @@ import FloorPlan3D from './components/FloorPlan3D';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-const GENERATE_URL = `${API_BASE_URL}/api/generate`;
-const AI_GENERATE_URL = `${API_BASE_URL}/api/ai-generate`;
+const VITE_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const GENERATE_URL = `${VITE_API_URL}/api/generate`;
+const AI_GENERATE_URL = `${VITE_API_URL}/api/ai-generate`;
 
 function App() {
   const [layout, setLayout] = useState(null);
@@ -39,11 +39,12 @@ function App() {
       setLayout(response.data);
     } catch (err) {
       console.error('API Error:', err);
-      setError(err.response?.data?.error || 'Could not reach backend server.');
+      setError(err.response?.data?.error || 'Could not reach backend server. Please ensure node backend/index.js is running.');
     } finally {
       setTimeout(() => setLoading(false), 500);
     }
   };
+
 
   const handleUpdateRoom = (roomId, updates) => {
     setLayout(prev => ({
@@ -55,12 +56,15 @@ function App() {
   const handleExport = async () => {
     if (!layout) return;
 
+
     setExporting(true);
     try {
+
       await new Promise(resolve => setTimeout(resolve, 100));
-      
+
       const doc = new jsPDF('p', 'mm', 'a4');
       const canvasArea = document.querySelector('.canvas-container');
+
 
       const canvas = await html2canvas(canvasArea, {
         scale: 2,
@@ -71,6 +75,7 @@ function App() {
       });
       const imgData = canvas.toDataURL('image/png');
 
+
       doc.setFontSize(22);
       doc.setTextColor(51, 65, 85);
       doc.text('AE-Crafter Architectural Report', 20, 25);
@@ -79,6 +84,7 @@ function App() {
       doc.setTextColor(148, 163, 184);
       doc.text(`Generated on ${new Date().toLocaleString()}`, 20, 32);
       doc.text(`ID: ${layout.id || 'N/A'}`, 150, 32);
+
 
       doc.setDrawColor(203, 213, 225);
       doc.line(20, 35, 190, 35);
@@ -97,9 +103,11 @@ function App() {
         `Setbacks: T:${layout.plot.setbacks.top}ft, B:${layout.plot.setbacks.bottom}ft, L:${layout.plot.setbacks.left}ft, R:${layout.plot.setbacks.right}ft`
       ], 20, 52);
 
+
       const imgWidth = 170;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       doc.addImage(imgData, 'PNG', 20, 75, imgWidth, imgHeight);
+
 
       if (layout.feedback) {
         const nextY = 75 + imgHeight + 15;
@@ -117,6 +125,7 @@ function App() {
         doc.text(splitText, 25, nextY + 7);
       }
 
+
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
       doc.text('This plan is AI-generated and should be verified by a certified architect before construction.', 105, 285, { align: 'center' });
@@ -129,6 +138,7 @@ function App() {
       setExporting(false);
     }
   };
+
 
   useEffect(() => {
     handleGenerate({
@@ -147,6 +157,7 @@ function App() {
   return (
     <div className="app-container">
       <FloorPlanForm onGenerate={handleGenerate} isGenerating={loading} />
+
 
       <main className="main-content">
         <header className="header">
@@ -278,4 +289,3 @@ function App() {
 }
 
 export default App;
-

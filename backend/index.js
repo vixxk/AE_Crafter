@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const { OpenAI } = require('openai');
 const { generateLayout } = require('../shared/layoutEngine');
 
+
 function resolveOverlaps(rooms, plot, setbacks) {
   const sortedRooms = [...rooms].sort((a, b) => (a.y - b.y) || (a.x - b.x));
   const placed = [];
@@ -18,15 +19,17 @@ function resolveOverlaps(rooms, plot, setbacks) {
 
   for (const room of sortedRooms) {
     let attempts = 0;
-    
+
+
+
     room.width = Math.max(1, Math.min(room.width, buildingArea.maxX - buildingArea.minX));
     room.height = Math.max(1, Math.min(room.height, buildingArea.maxY - buildingArea.minY));
-    
+
     room.x = Math.max(buildingArea.minX, Math.min(room.x, buildingArea.maxX - room.width));
     room.y = Math.max(buildingArea.minY, Math.min(room.y, buildingArea.maxY - room.height));
 
     const checkOverlap = (r1, r2) => {
-      const margin = 0.05; 
+      const margin = 0.05;
       return !(r1.x + r1.width - margin <= r2.x ||
                r1.x >= r2.x + r2.width - margin ||
                r1.y + r1.height - margin <= r2.y ||
@@ -34,20 +37,25 @@ function resolveOverlaps(rooms, plot, setbacks) {
     };
 
     while (placed.some(p => checkOverlap(room, p)) && attempts < 200) {
+
       room.x += 1;
-      
+
+
       if (room.x + room.width > buildingArea.maxX) {
         room.x = buildingArea.minX;
         room.y += 1;
       }
-      
+
+
       if (room.y + room.height > buildingArea.maxY) {
+
+
         room.y = buildingArea.maxY - room.height;
-        break; 
+        break;
       }
       attempts++;
     }
-    
+
     placed.push(room);
   }
   return placed;
@@ -56,22 +64,23 @@ function resolveOverlaps(rooms, plot, setbacks) {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors({ origin: process.env.FRONTEND_URL || "*" }));
 app.use(bodyParser.json());
- 
+
+
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'UP', message: 'Server is healthy', timestamp: new Date().toISOString() });
 });
+
+
 
 const fireworks = new OpenAI({
   apiKey: process.env.FIREWORKS_API_KEY || '',
   baseURL: 'https://api.fireworks.ai/inference/v1',
 });
 const MODEL = 'accounts/fireworks/models/llama-v3p3-70b-instruct';
+
+
 
 const SYSTEM_PROMPT = `
 You are AE-Crafter, a world-class architectural AI engine. Your task is to generate a structured 2D floor plan JSON based on a user's description.
@@ -101,6 +110,8 @@ Output Schema (JSON):
 IMPORTANT: Respond ONLY with a valid JSON object. Do not include any explanations outside the JSON.
 `;
 
+
+
 app.post('/api/generate', (req, res) => {
   try {
     const input = req.body;
@@ -115,6 +126,7 @@ app.post('/api/generate', (req, res) => {
   }
 });
 
+
 app.post('/api/ai-generate', async (req, res) => {
   const { plot, prompt, setbacks, orientation } = req.body;
 
@@ -125,7 +137,7 @@ app.post('/api/ai-generate', async (req, res) => {
   try {
     const plotWithDetails = { ...plot, setbacks, orientation };
     const fullPrompt = `Plot Info: ${JSON.stringify(plotWithDetails)}\nUser Description: ${prompt}`;
-    
+
     const result = await fireworks.chat.completions.create({
       model: MODEL,
       messages: [
@@ -136,7 +148,7 @@ app.post('/api/ai-generate', async (req, res) => {
     });
 
     const responseText = result.choices[0].message.content;
-    
+
     let layout;
     try {
       layout = JSON.parse(responseText);
@@ -150,6 +162,7 @@ app.post('/api/ai-generate', async (req, res) => {
       throw new Error('AI Brain returned a response without a valid room layout.');
     }
 
+
     const currentSetbacks = setbacks || { top: 3, bottom: 3, left: 3, right: 3 };
     const maxBuildingWidth = plot.width - currentSetbacks.left - currentSetbacks.right;
     const maxBuildingHeight = plot.height - currentSetbacks.top - currentSetbacks.bottom;
@@ -157,12 +170,14 @@ app.post('/api/ai-generate', async (req, res) => {
     const correctedRooms = layout.rooms.map(room => ({
       ...room,
       id: room.id || Math.random().toString(36).substring(2, 9),
+
       width: Math.max(Math.min(room.width || 10, maxBuildingWidth), 3),
       height: Math.max(Math.min(room.height || 10, maxBuildingHeight), 3),
       wallHeight: room.wallHeight || 10,
       x: room.x || currentSetbacks.left,
       y: room.y || currentSetbacks.top
     }));
+
 
     layout.rooms = resolveOverlaps(correctedRooms, plot, currentSetbacks);
     layout.plot = { ...plot, setbacks: currentSetbacks, orientation: orientation || 'North' };
@@ -177,5 +192,4 @@ app.post('/api/ai-generate', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
 

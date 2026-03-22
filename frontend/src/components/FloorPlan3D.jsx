@@ -29,6 +29,7 @@ const Wall = ({ position, rotation, args, color = "#cbd5e1" }) => {
           opacity={0.7}
         />
       </mesh>
+      {}
       <mesh position={[0, -args[1] / 2 + 0.3, args[2] / 2 + 0.1]}>
         <boxGeometry args={[args[0], 0.6, 0.4]} />
         <meshStandardMaterial color="#ffffff" />
@@ -36,6 +37,7 @@ const Wall = ({ position, rotation, args, color = "#cbd5e1" }) => {
     </group>
   );
 };
+
 
 const Bed = () => (
   <group position={[0, 1.5, 0]}>
@@ -77,10 +79,12 @@ const Sofa = () => (
 
 const TVSet = () => (
   <group position={[0, 0, 0]}>
+    {}
     <mesh position={[0, 4, 0]} castShadow>
       <boxGeometry args={[100, 8, 20]} />
       <meshStandardMaterial color="#0f172a" />
     </mesh>
+    {}
     <mesh position={[0, 20, 5]}>
       <boxGeometry args={[80, 45, 2]} />
       <meshStandardMaterial color="#000000" emissive="#1e293b" emissiveIntensity={0.5} />
@@ -90,10 +94,12 @@ const TVSet = () => (
 
 const Window = ({ width, height }) => (
   <group>
+    {}
     <mesh castShadow>
       <boxGeometry args={[width, height, 4]} />
       <meshStandardMaterial color="#334155" opacity={0.5} transparent />
     </mesh>
+    {}
     <mesh>
       <boxGeometry args={[width - 8, height - 8, 1]} />
       <meshStandardMaterial color="#bae6fd" transparent opacity={0.2} metalness={1} roughness={0} />
@@ -116,14 +122,17 @@ const FlowerVase = () => (
 
 const Shower = () => (
   <group position={[0, 0, 0]}>
+    {}
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.5, 0]}>
       <planeGeometry args={[50, 50]} />
       <meshStandardMaterial color="#cbd5e1" metalness={0.5} />
     </mesh>
+    {}
     <mesh position={[20, 80, 0]}>
       <boxGeometry args={[5, 120, 5]} />
       <meshStandardMaterial color="#94a3b8" metalness={0.8} />
     </mesh>
+    {}
     <mesh position={[5, 140, 0]} rotation={[0, 0, Math.PI / 4]}>
       <cylinderGeometry args={[8, 5, 10, 16]} />
       <meshStandardMaterial color="#94a3b8" metalness={0.8} />
@@ -167,6 +176,7 @@ const KitchenCounter = ({ width, height }) => (
       <boxGeometry args={[width + 2, 0.5, 17]} />
       <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.2} />
     </mesh>
+    {}
     <group position={[-width / 4, 4.5, 0]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[5, 32]} />
@@ -185,6 +195,7 @@ const Room3D = ({ room }) => {
   const wallHeight = rawWallHeight || 10;
   const color = getRoomColor(type);
 
+
   const centerX = (x + width / 2) * FEET_TO_UNITS;
   const centerZ = (y + height / 2) * FEET_TO_UNITS;
   const centerY = (wallHeight * FEET_TO_UNITS) / 2;
@@ -195,6 +206,7 @@ const Room3D = ({ room }) => {
 
   return (
     <group position={[centerX, 0, centerZ]}>
+      {}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, 0.1, 0]}>
         <planeGeometry args={[w, h]} />
         <meshStandardMaterial
@@ -205,6 +217,7 @@ const Room3D = ({ room }) => {
         />
       </mesh>
 
+      {}
       <group position={[0, wh + 10, 0]}>
         <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
           <Text
@@ -231,6 +244,7 @@ const Room3D = ({ room }) => {
         </Float>
       </group>
 
+      {}
       <Html position={[0, wh / 2, 0]} center distanceFactor={150}>
         <div style={{
           background: 'rgba(15, 23, 42, 0.6)',
@@ -254,6 +268,7 @@ const Room3D = ({ room }) => {
         </div>
       </Html>
 
+      {}
       <Grid
         args={[w, h]}
         cellSize={FEET_TO_UNITS}
@@ -265,6 +280,8 @@ const Room3D = ({ room }) => {
         rotation={[-Math.PI / 2, 0, 0]}
       />
 
+      {}
+      {}
       {(type === 'living room' || type === 'bedroom') && (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.2, 0]} receiveShadow>
           <planeGeometry args={[w * 0.7, h * 0.7]} />
@@ -322,6 +339,7 @@ const Room3D = ({ room }) => {
             <boxGeometry args={[80, 3, 120]} />
             <meshStandardMaterial color="#451a03" />
           </mesh>
+          {}
           {[[-50, 0], [50, 0], [0, -70], [0, 70]].map((pos, i) => (
             <mesh key={i} position={[pos[0], 5, pos[1]]} castShadow>
               <boxGeometry args={[20, 10, 20]} />
@@ -331,10 +349,12 @@ const Room3D = ({ room }) => {
         </group>
       )}
 
+      {}
       <Wall position={[-w / 2, wh / 2, 0]} rotation={[0, Math.PI / 2, 0]} args={[h, wh, 2]} />
       <Wall position={[w / 2, wh / 2, 0]} rotation={[0, Math.PI / 2, 0]} args={[h, wh, 2]} />
       <Wall position={[0, wh / 2, -h / 2]} rotation={[0, 0, 0]} args={[w, wh, 2]} />
 
+      {}
       <group position={[0, wh / 2, h / 2]}>
         <Wall position={[0, 0, 0]} rotation={[0, 0, 0]} args={[w, wh, 2]} />
         <group position={[0, 5, 2]}>
@@ -384,6 +404,7 @@ const FloorPlan3D = ({ layout }) => {
 
           <Environment preset="city" />
 
+          {}
           <ContactShadows
             position={[0, 0, 0]}
             opacity={0.6}
@@ -394,6 +415,7 @@ const FloorPlan3D = ({ layout }) => {
             color="#000000"
           />
 
+          {}
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[(plot.width * FEET_TO_UNITS) / 2, -2, (plot.height * FEET_TO_UNITS) / 2]} receiveShadow>
             <planeGeometry args={[plot.width * 10 * FEET_TO_UNITS, plot.height * 10 * FEET_TO_UNITS]} />
             <meshStandardMaterial color="#f8fafc" />
@@ -434,4 +456,3 @@ const getRoomColor = (type) => {
 };
 
 export default FloorPlan3D;
-
