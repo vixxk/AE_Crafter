@@ -20,20 +20,22 @@ const ROOM_TYPES = [
   'Dining Area',
   'Study',
   'Guest Room',
+  'Puja Room',
   'Balcony',
   'Garage'
 ];
 
 const FloorPlanForm = ({ onGenerate, isGenerating }) => {
   const [mode, setMode] = useState('manual');
-  const [plot, setPlot] = useState({ width: 50, height: 40 });
+  const [plot, setPlot] = useState({ width: 42, height: 45 });
   const [setbacks, setSetbacks] = useState({ top: 3, bottom: 3, left: 3, right: 3 });
   const [orientation, setOrientation] = useState('North');
   const [rooms, setRooms] = useState([
-    { id: '1', type: 'living room', width: 20, height: 18, wallHeight: 10 },
-    { id: '2', type: 'bedroom', width: 15, height: 14, wallHeight: 10 },
-    { id: '3', type: 'kitchen', width: 12, height: 14, wallHeight: 10 },
-    { id: '4', type: 'bathroom', width: 8, height: 8, wallHeight: 10 }
+    { id: '1', type: 'bedroom', width: 12, height: 12, wallHeight: 10 },
+    { id: '2', type: 'bedroom', width: 12, height: 12, wallHeight: 10 },
+    { id: '3', type: 'bedroom', width: 12, height: 12, wallHeight: 10 },
+    { id: '4', type: 'kitchen', width: 12, height: 12, wallHeight: 10 },
+    { id: '5', type: 'puja room', width: 10, height: 12, wallHeight: 10 },
   ]);
 
   const [newRoom, setNewRoom] = useState({
@@ -41,6 +43,18 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
     width: 12,
     height: 12,
     wallHeight: 10
+  });
+
+  const [requirements, setRequirements] = useState({
+    numRooms: 'auto',
+    entranceDirection: 'South',
+    staircasePosition: 'middle',
+    hasCorridor: true,
+    hasParking: false,
+    units: 'feet',
+    numDoors: 'auto',
+    numWindows: 'auto',
+    numVentilators: 'auto'
   });
 
   const [aiPrompt, setAiPrompt] = useState('A 3BHK modern villa with an open kitchen, large living room facing North, and a master bedroom with attached balcony.');
@@ -59,11 +73,11 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    onGenerate({ plot, rooms, setbacks, orientation });
+    onGenerate({ plot, rooms, setbacks, orientation, requirements });
   };
 
   const handleAIGenerate = () => {
-    onGenerate({ plot, prompt: aiPrompt, setbacks, orientation }, true);
+    onGenerate({ plot, prompt: aiPrompt, setbacks, orientation, requirements }, true);
   };
 
 
@@ -231,7 +245,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
                 placeholder="E.g. A spacious 2 bedroom house with a central hall..."
                 style={{
                   width: '100%',
-                  height: '180px',
+                  height: '100px',
                   background: 'white',
                   border: '1.5px solid var(--border-color)',
                   borderRadius: '12px',
@@ -243,9 +257,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
                   marginBottom: '10px'
                 }}
               />
-              <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic', fontWeight: '500' }}>
-                Tip: Mention floor count, room proximities, and specific dimensions for better results.
-              </p>
+              {/* Tip removed for UI clarity */}
             </div>
           </section>
         )}

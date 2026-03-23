@@ -423,7 +423,7 @@ const FloorPlan3D = ({ layout }) => {
           <Grid
             infiniteGrid
             cellColor="#cbd5e1"
-            sectionColor="var(--primary-color)"
+            sectionColor="#be123c"
             cellSize={FEET_TO_UNITS}
             sectionSize={FEET_TO_UNITS * 5}
             fadeDistance={5000}

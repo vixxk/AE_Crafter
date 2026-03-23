@@ -46,12 +46,33 @@ function generateLayout(input) {
   let bh = plotH - sb.top - sb.bottom;
   if (bw < 10 || bh < 10) throw new Error('Building area too small after setbacks.');
 
+  // Optionally shrink building envelope if user requested much smaller rooms
+  // This prevents extreme stretching like 54x12 living rooms on huge plots
+  const totalReqArea = inputRooms.reduce((sum, r) => sum + ((r.width||10) * (r.height||10)), 0);
+  const maxAllowedArea = bw * bh;
+
+  // Add 15% overhead for corridors/walls
+  if (totalReqArea * 1.15 < maxAllowedArea) {
+    // We can shrink the building proportionally!
+    const shrinkRatio = Math.sqrt((totalReqArea * 1.15) / maxAllowedArea);
+    
+    // Calculate new bw/bh, don't fall below minimum plausible house sizes (e.g. 20x20)
+    const newBw = snap(Math.max(bw * shrinkRatio, 20));
+    const newBh = snap(Math.max(bh * shrinkRatio, 20));
+
+    // Center the shrunken building envelope on the plot
+    bx = sb.left + snap((bw - newBw) / 2);
+    by = sb.top + snap((bh - newBh) / 2);
+    
+    bw = newBw;
+    bh = newBh;
+  }
+
   const entranceDir = (requirements.entranceDirection || orientation || 'South').toLowerCase();
   const wantStaircase = requirements.staircasePosition && requirements.staircasePosition !== 'none';
   const wantCorridor = requirements.hasCorridor !== undefined ? requirements.hasCorridor : false;
   const wantParking = requirements.hasParking || false;
   const hasCenterSpine = wantCorridor || wantStaircase;
-  const explicitSpine = requirements.corridorWidth ? Number(requirements.corridorWidth) : (hasCenterSpine ? 5 : 0);
 
   // ─── Categorize Rooms ─────────────────────────────────────────────
   const roomDefs = inputRooms
@@ -59,7 +80,6 @@ function generateLayout(input) {
     .map((room, i) => ({
       id: room.id || `room-${i}`,
       type: (room.type || 'bedroom').toLowerCase(),
-      label: room.label || '',
       reqW: Math.max(room.width || 10, 5),
       reqH: Math.max(room.height || 10, 5),
       wallHeight: room.wallHeight || 10,
@@ -79,104 +99,45 @@ function generateLayout(input) {
   for (const bed of bedrooms) {
     let bath = null;
     for (const b of bathrooms) {
-      const isPublic = /(living|common|guest|public)/i.test(b.label || '') || /(living|common|guest|public)/i.test(b.id || '');
-      if (!usedBaths.has(b.id) && !isPublic) { bath = b; usedBaths.add(b.id); break; }
+      if (!usedBaths.has(b.id)) { bath = b; usedBaths.add(b.id); break; }
     }
     bedroomPairs.push({ bed, bath });
   }
   const unpairedBaths = bathrooms.filter(b => !usedBaths.has(b.id));
 
-  // ─── Pre-calculate Placements to Find Requested Envelope ───────────
+  // ─── Grid Dimensions ─────────────────────────────────────────────
+  const spineW = hasCenterSpine ? snap(Math.max(5, Math.min(bw * 0.14, 7))) : 0;
   const isNarrow = bw <= 24; // Too small for 3 columns
 
-  const leftPairsInit = [], rightPairsInit = [];
-  for (let i = 0; i < bedroomPairs.length; i++) {
-    if (isNarrow || i % 2 === 0) leftPairsInit.push(bedroomPairs[i]);
-    else rightPairsInit.push(bedroomPairs[i]);
-  }
-
-  const utilityItems = [...kitchens, ...diningRooms, ...otherRooms, ...unpairedBaths];
-  const leftUtilInit = [], rightUtilInit = [];
-  for (let i = 0; i < utilityItems.length; i++) {
-    if (isNarrow || i % 2 === 0) leftUtilInit.push(utilityItems[i]);
-    else rightUtilInit.push(utilityItems[i]);
-  }
-
-  let leftReqW = 0, rightReqW = 0;
-  let leftPrivateReqH = 0, rightPrivateReqH = 0;
-  
-  leftPairsInit.forEach(p => {
-    let w = p.bed.reqW;
-    if (p.bath) w += p.bath.reqW;
-    if (w > leftReqW) leftReqW = w;
-    leftPrivateReqH += p.bed.reqH;
-  });
-  
-  rightPairsInit.forEach(p => {
-    let w = p.bed.reqW;
-    if (p.bath) w += p.bath.reqW;
-    if (w > rightReqW) rightReqW = w;
-    rightPrivateReqH += p.bed.reqH;
-  });
-
-  let leftUtilReqH = 0, rightUtilReqH = 0;
-  leftUtilInit.forEach(u => {
-    if (u.reqW > leftReqW) leftReqW = u.reqW;
-    leftUtilReqH += u.reqH;
-  });
-  rightUtilInit.forEach(u => {
-    if (u.reqW > rightReqW) rightReqW = u.reqW;
-    rightUtilReqH += u.reqH;
-  });
-
-  const spineW = hasCenterSpine ? (explicitSpine > 0 ? explicitSpine : snap(Math.max(4, Math.min(bw * 0.14, 7)))) : 0;
-
-  // Build adjusted envelope perfectly matching user dimensions if it fits!
-  let exactReqW = isNarrow ? Math.max(leftReqW, rightReqW) + spineW : leftReqW + rightReqW + spineW;
-  const maxPrivateReqH = Math.max(leftPrivateReqH, rightPrivateReqH);
-  const maxUtilReqH = Math.max(leftUtilReqH, rightUtilReqH);
-  const hasLiving = livingRooms.length > 0;
-  const livingReqH = hasLiving ? livingRooms.reduce((s, r) => s + r.reqH, 0) : 0;
-  let exactReqH = maxPrivateReqH + maxUtilReqH + livingReqH;
-
-  // Ensure bounds
-  const limitedReqW = Math.min(exactReqW, plotW - sb.left - sb.right);
-  const limitedReqH = Math.min(exactReqH, plotH - sb.top - sb.bottom);
-
-  if (exactReqW > 0) {
-      bw = Math.max(limitedReqW, 20);
-      bx = sb.left + snap((plotW - sb.left - sb.right - bw) / 2);
-  }
-  if (exactReqH > 0) {
-      bh = Math.max(limitedReqH, 20);
-      by = sb.top + snap((plotH - sb.top - sb.bottom - bh) / 2);
-  }
-
-  // ─── Grid Dimensions ─────────────────────────────────────────────
   let leftColW, rightColW, spineX, rightColX;
   if (isNarrow) {
+    // Narrow plot: single large column for rooms, spine on the right
     leftColW = bw - spineW;
     rightColW = 0;
     spineX = bx + leftColW;
     rightColX = spineX + spineW;
   } else {
-    // Proportional splits to exact required widths instead of equal halves
-    const totalCols = (leftReqW + rightReqW) || 2;
-    leftColW = snap((bw - spineW) * (leftReqW / totalCols));
+    // Wide plot: spine in the middle
+    leftColW = snap((bw - spineW) / 2);
     rightColW = bw - leftColW - spineW;
     spineX = bx + leftColW;
     rightColX = spineX + spineW;
   }
 
-  // Proportional vertical splits
-  const totalHReqs = maxPrivateReqH + maxUtilReqH + livingReqH || 1;
-  const livingH = hasLiving ? snap(bh * (livingReqH / totalHReqs)) : 0;
+  // Living room at entry side (full width)
+  const hasLiving = livingRooms.length > 0;
+  const totalLivingReqH = hasLiving ? livingRooms.reduce((s, r)=> s+r.reqH, 0) : 0;
+  // If user requested 10x14, we try to honor the proportional height, else use default ratio
+  const tempLivingH = hasLiving ? Math.max(bh * 0.22, 9) : 0;
+  const livingH = hasLiving ? snap(Math.max(tempLivingH, Math.min(totalLivingReqH, bh*0.4))) : 0;
   const mainH = bh - livingH;
-  
+
+  // Utility row (kitchen, dining, puja, extra baths)
+  const utilityItems = [...kitchens, ...diningRooms, ...otherRooms, ...unpairedBaths];
   const hasUtility = utilityItems.length > 0;
-  const totalUtilPriv = maxPrivateReqH + maxUtilReqH || 1;
-  const utilityRowH = hasUtility ? snap(mainH * (maxUtilReqH / totalUtilPriv)) : 0;
+  const utilityRowH = hasUtility ? snap(mainH * 0.40) : 0;
   const privateRowH = mainH - utilityRowH;
+
   const placedRooms = [];
 
   // ─── Infrastructure ───────────────────────────────────────────────
@@ -409,7 +370,7 @@ function generateLayout(input) {
     if (c1 || c2) return 8;
 
     if (t1 === 'parking' || t2 === 'parking') return -10;
-    if (t1 === 'staircase' || t2 === 'staircase') return -50; // Absolutely last resort
+    if (t1 === 'staircase' || t2 === 'staircase') return -2; // Last resort
 
     // Prevent kitchen/bathroom opening directly into a bedroom unless ensuite (already handled)
     if ((t1 === 'kitchen' && ['bedroom', 'guest room', 'bathroom'].includes(t2)) ||
@@ -429,16 +390,7 @@ function generateLayout(input) {
     if (placedDoors.has(key) || dc >= numDoors) return;
     placedDoors.add(key);
 
-    let pos;
-    const isStair = rMap.get(sw.r1).type === 'staircase' || rMap.get(sw.r2).type === 'staircase';
-    if (isStair) {
-      // Place door at the end of the shared wall (landing area)
-      pos = snap(sw.end - 3);
-      if (pos < sw.start) pos = sw.start;
-    } else {
-      pos = snap(sw.start + (sw.end - sw.start) * 0.3);
-    }
-
+    const pos = snap(sw.start + (sw.end - sw.start) * 0.3);
     if (sw.isH) components.push({ type: 'door', x: pos, y: sw.y, width: 3, orientation: 'horizontal', label: 'D' });
     else components.push({ type: 'door', x: sw.x, y: pos, width: 3, orientation: 'vertical', label: 'D' });
     dc++;

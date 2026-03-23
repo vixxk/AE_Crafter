@@ -109,26 +109,61 @@ function App() {
       doc.addImage(imgData, 'PNG', 20, 75, imgWidth, imgHeight);
 
 
-      if (layout.feedback) {
-        const nextY = 75 + imgHeight + 15;
-        doc.setFillColor(240, 249, 255);
-        doc.rect(20, nextY - 5, 170, 25, 'F');
+      // --- Formal Blueprint Title & Stamp Section ---
+      const stampY = 75 + imgHeight + 20;
 
+      // Plan Title
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 41, 59);
+      doc.text('PLAN & ELEVATION FOR GROUND FLOOR', 105, stampY, { align: 'center' });
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('ALL THE DIMENSIONS ARE IN FEET.', 105, stampY + 6, { align: 'center' });
+
+      // Designer Stamp Box
+      const boxW = 80;
+      const boxH = 35;
+      const boxX = 130;
+      const boxY = stampY + 15;
+
+      doc.setDrawColor(30, 41, 59);
+      doc.setLineWidth(0.5);
+      doc.rect(boxX, boxY, boxW, boxH);
+
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.text('DESIGNED & PLANNED BY:', boxX + 5, boxY + 10);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text('AE-CRAFTER ENGINE V2.0', boxX + 5, boxY + 20);
+      doc.setFontSize(8);
+      doc.text('VIRTUAL ARCHITECTURAL AI SYSTEM', boxX + 5, boxY + 28);
+
+      // Feedback / Insights Section (Moved to bottom of stamp area)
+      if (layout.feedback) {
+        const feedbackY = boxY + boxH + 15;
+        doc.setFillColor(248, 250, 252);
+        doc.rect(20, feedbackY - 5, 170, 25, 'F');
+
+        doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(30, 64, 175);
-        doc.text('AE-Crafter Architectural Feedback:', 25, nextY);
+        doc.text('AE-CRAFTER ARCHITECTURAL INSIGHTS:', 25, feedbackY);
 
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(9);
         doc.setTextColor(51, 65, 85);
         const splitText = doc.splitTextToSize(layout.feedback, 160);
-        doc.text(splitText, 25, nextY + 7);
+        doc.text(splitText, 25, feedbackY + 7);
       }
 
-
+      // Footer disclaimer
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
-      doc.text('This plan is AI-generated and should be verified by a certified architect before construction.', 105, 285, { align: 'center' });
+      doc.text('This plan is AI-generated and should be verified by a certified architect before construction.', 105, 290, { align: 'center' });
 
       doc.save(`ae-crafter-report-${Date.now()}.pdf`);
     } catch (err) {
@@ -142,15 +177,25 @@ function App() {
 
   useEffect(() => {
     handleGenerate({
-      plot: { width: 50, height: 40 },
+      plot: { width: 42, height: 45 },
       setbacks: { top: 3, bottom: 3, left: 3, right: 3 },
       orientation: 'North',
       rooms: [
-        { id: '1', type: 'living room', width: 22, height: 20, wallHeight: 10 },
-        { id: '2', type: 'bedroom', width: 15, height: 15, wallHeight: 10 },
-        { id: '3', type: 'kitchen', width: 12, height: 15, wallHeight: 10 },
-        { id: '4', type: 'bathroom', width: 8, height: 8, wallHeight: 10 }
-      ]
+        { id: '1', type: 'bedroom', width: 12, height: 12, wallHeight: 10 },
+        { id: '2', type: 'bedroom', width: 12, height: 12, wallHeight: 10 },
+        { id: '3', type: 'bedroom', width: 12, height: 12, wallHeight: 10 },
+        { id: '4', type: 'kitchen', width: 12, height: 12, wallHeight: 10 },
+        { id: '5', type: 'puja room', width: 10, height: 12, wallHeight: 10 },
+      ],
+      requirements: {
+        entranceDirection: 'South',
+        staircasePosition: 'middle',
+        hasCorridor: true,
+        hasParking: false,
+        numDoors: 6,
+        numWindows: 6,
+        numVentilators: 1,
+      }
     });
   }, []);
 
@@ -176,32 +221,46 @@ function App() {
             </div>
           </div>
 
-          <div className="view-controls">
-            <button
-              className={`view-btn ${view === '2D' ? 'active' : ''}`}
-              onClick={() => setView('2D')}
-            >
-              <Layout size={18} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-              Plan View
-            </button>
-            <button
-              className={`view-btn ${view === '3D' ? 'active' : ''}`}
-              onClick={() => setView('3D')}
-            >
-              <Box size={18} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-              3D Render
-            </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="view-controls">
+              <button
+                className={`view-btn ${view === '2D' ? 'active' : ''}`}
+                onClick={() => setView('2D')}
+              >
+                <Layout size={18} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Plan View
+              </button>
+              <button
+                className={`view-btn ${view === '3D' ? 'active' : ''}`}
+                onClick={() => setView('3D')}
+              >
+                <Box size={18} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                3D Render
+              </button>
+            </div>
+
+            {layout && !loading && (
+              <button
+                className="btn btn-primary"
+                style={{ width: 'auto', padding: '8px 16px', fontSize: '0.85rem' }}
+                onClick={handleExport}
+                disabled={exporting}
+              >
+                {exporting ? (
+                  <>
+                    <RefreshCcw size={16} className="spin" /> Exporting...
+                  </>
+                ) : (
+                  <>
+                    <Download size={16} /> Export PDF
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </header>
 
         <section className="canvas-container">
-          {loading && (
-            <div className="empty-state">
-              <div className="loading-spinner" />
-              <p style={{ fontWeight: '600', color: 'var(--text-color)' }}>Generating...</p>
-            </div>
-          )}
-
           {error && (
             <div className="empty-state">
               <Info size={48} color="#ef4444" />
@@ -215,74 +274,26 @@ function App() {
             </div>
           )}
 
-          {!loading && !error && layout && (
-            <>
-              {layout.feedback && (
-                <div style={{
-                  margin: '16px',
-                  padding: '12px 16px',
-                  background: 'var(--primary-color)',
-                  color: 'white',
-                  borderRadius: '12px',
-                  fontSize: '0.85rem',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                  boxShadow: '0 4px 15px rgba(59, 130, 246, 0.2)',
-                  animation: 'slideIn 0.3s ease-out'
-                }}>
-                  <Info size={18} style={{ marginTop: '2px', flexShrink: 0 }} />
-                  <div>
-                    <strong style={{ display: 'block', marginBottom: '4px' }}>AE-Crafter Insights:</strong>
-                    {layout.feedback}
-                  </div>
+          {!error && layout && (
+            <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ display: view === '2D' ? 'block' : 'none', width: '100%', height: '100%' }}>
+                <FloorPlan2D layout={layout} onRoomUpdate={handleUpdateRoom} />
+              </div>
+              <div style={{ display: view === '3D' ? 'block' : 'none', width: '100%', height: '100%' }}>
+                <FloorPlan3D layout={layout} />
+              </div>
+
+              {loading && (
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', zIndex: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="loading-spinner" />
+                  <p style={{ fontWeight: '600', color: 'var(--text-color)' }}>Generating...</p>
                 </div>
               )}
-              {view === '2D' ? (
-                <FloorPlan2D layout={layout} onRoomUpdate={handleUpdateRoom} />
-              ) : (
-                <FloorPlan3D layout={layout} />
-              )}
-            </>
+            </div>
           )}
         </section>
 
-        {view === '2D' && (
-          <div style={{
-            padding: '12px 24px',
-            textAlign: 'center',
-            fontSize: '0.85rem',
-            fontWeight: '600',
-            color: 'var(--primary-color)',
-            background: '#f0f9ff',
-            borderTop: '1px solid var(--border-color)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px'
-          }}>
-            <Maximize size={16} />
-            Interactive drag and drop structures according to your choice
-          </div>
-        )}
-
-        {layout && !loading && (
-          <button
-            className="btn btn-primary export-json"
-            onClick={handleExport}
-            disabled={exporting}
-          >
-            {exporting ? (
-              <>
-                <RefreshCcw size={20} className="spin" /> Generating PDF...
-              </>
-            ) : (
-              <>
-                <Download size={20} /> Export Architectural PDF
-              </>
-            )}
-          </button>
-        )}
+        {/* Interactive hint removed for UI clarity */}
       </main>
     </div>
   );

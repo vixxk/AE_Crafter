@@ -6,60 +6,7 @@ const { OpenAI } = require('openai');
 const { generateLayout } = require('../shared/layoutEngine');
 
 
-function resolveOverlaps(rooms, plot, setbacks) {
-  const sortedRooms = [...rooms].sort((a, b) => (a.y - b.y) || (a.x - b.x));
-  const placed = [];
 
-  const buildingArea = {
-    minX: setbacks.left,
-    maxX: plot.width - setbacks.right,
-    minY: setbacks.top,
-    maxY: plot.height - setbacks.bottom
-  };
-
-  for (const room of sortedRooms) {
-    let attempts = 0;
-
-
-
-    room.width = Math.max(1, Math.min(room.width, buildingArea.maxX - buildingArea.minX));
-    room.height = Math.max(1, Math.min(room.height, buildingArea.maxY - buildingArea.minY));
-
-    room.x = Math.max(buildingArea.minX, Math.min(room.x, buildingArea.maxX - room.width));
-    room.y = Math.max(buildingArea.minY, Math.min(room.y, buildingArea.maxY - room.height));
-
-    const checkOverlap = (r1, r2) => {
-      const margin = 0.05;
-      return !(r1.x + r1.width - margin <= r2.x ||
-               r1.x >= r2.x + r2.width - margin ||
-               r1.y + r1.height - margin <= r2.y ||
-               r1.y >= r2.y + r2.height - margin);
-    };
-
-    while (placed.some(p => checkOverlap(room, p)) && attempts < 200) {
-
-      room.x += 1;
-
-
-      if (room.x + room.width > buildingArea.maxX) {
-        room.x = buildingArea.minX;
-        room.y += 1;
-      }
-
-
-      if (room.y + room.height > buildingArea.maxY) {
-
-
-        room.y = buildingArea.maxY - room.height;
-        break;
-      }
-      attempts++;
-    }
-
-    placed.push(room);
-  }
-  return placed;
-}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -87,34 +34,44 @@ const MODEL = 'accounts/fireworks/models/llama-v3p3-70b-instruct';
 
 
 const SYSTEM_PROMPT = `
-You are AE-Crafter, a world-class architectural AI engine. Your task is to generate a structured 2D floor plan JSON based on a user's description.
-
-Architectural Principles:
-1. SPACE UTILIZATION (MAXIMIZE): Aim to use as much of the building area (plot minus setbacks) as possible. If the user does not specify room dimensions, you MUST increase room sizes to logical maximums (e.g., Living Room 25x20, Bedrooms 15x15) to cover the available area efficiently. Avoid leaving large empty spaces in the plot unless it's for a yard/garden.
-2. ENTRANCE & ORIENTATION: Follow the North orientation for the entrance (Living Room focus).
-3. ZONING & PROXIMITY: Kitchen near Dining, Master Bedroom with attached Bathroom.
-4. VALIDATION: If the user request is physically impossible, generate a feasible layout but use the "feedback" field to explain why you adjusted sizes.
-5. SUGGESTIONS: Provide 2-3 architectural suggestions in the "feedback" field.
+You are AE-Crafter's AI Brain. Your role is purely semantic architecture: analyze the user's description and requirements to decide EXACTLY which rooms are needed and their ideal sizes. 
+A separate Geometric Engine will handle the physical placement, coordinate grid, and doors/windows.
 
 Input Schema:
 {
-  "plot": { "width": number, "height": number, "orientation": string, "setbacks": { "top": number, "bottom": number, "left": number, "right": number } },
-  "prompt": "string"
+  "plot": { "width": number, "height": number, "orientation": string, "setbacks": ... },
+  "prompt": "string",
+  "requirements": { ... }
 }
 
-Output Schema (JSON):
+Output Schema (JSON ONLY!):
 {
-  "plot": { "width": number, "height": number, "orientation": string, "setbacks": { "top": number, "bottom": number, "left": number, "right": number } },
+  "corridorWidth": number (optional, requested corridor width in ft, e.g. 4),
+  "setbacks": { "top": number, "bottom": number, "left": number, "right": number } (optional, suggest setbacks to fit requirements within the plot!),
+  "requirements": {
+    "staircasePosition": "middle" | "side" | "none",
+    "hasCorridor": boolean,
+    "hasParking": boolean,
+    "entranceDirection": "South" | "North" | "East" | "West"
+  },
   "rooms": [
-    { "id": "string", "type": "bedroom" | "living room" | "kitchen" | "bathroom" | "dining area" | "study" | "balcony" | "garage", "x": number, "y": number, "width": number, "height": number, "wallHeight": number }
-  ],
-  "feedback": "A concise string containing errors, limitations, or architectural suggestions."
+    { 
+      "id": "string (unique)", 
+      "type": "bedroom" | "living room" | "kitchen" | "bathroom" | "dining area" | "study" | "balcony" | "garage" | "guest room" | "puja room", 
+      "width": number (ideal width in ft), 
+      "height": number (ideal height in ft),
+      "label": "string (IMPORTANT: For public/common bathrooms, use label 'COMMON BATHROOM' or 'LIVING ROOM BATHROOM' to prevent default ensuite pairing. For private ensuite bathrooms, use normal labels like 'MASTER BATH')"
+    }
+  ]
 }
 
-IMPORTANT: Respond ONLY with a valid JSON object. Do not include any explanations outside the JSON.
+Rules:
+1. Translate descriptions like "3BHK" into exactly 3 bedrooms, 1 living room, 1 kitchen, and bathrooms as specified.
+2. DO NOT include "staircase", "corridor", or "parking" in your rooms array. The geometric engine automatically handles circulation/parking based on the requirements.
+3. If requirements.numRooms is a number, create exactly that many rooms. If it is "auto", use your architectural expertise based on the prompt.
+4. Provide realistic ideal widths and heights for rooms (e.g. 15x15 for Living, 12x12 for Bedrooms, 5x6 for Bathrooms).
+5. ABSOLUTE PRIORITY: The user's specific prompt takes absolute precedence! If they request a specific staircase location (e.g. 'central'), explicitly output "staircasePosition": "middle" in requirements. If they specify exact room counts or dimensions, honor them without question.
 `;
-
-
 
 app.post('/api/generate', (req, res) => {
   try {
@@ -122,7 +79,14 @@ app.post('/api/generate', (req, res) => {
     if (!input.plot || !input.rooms) {
       return res.status(400).json({ error: 'Plot dimensions and rooms list are required.' });
     }
-    const layout = generateLayout(input);
+
+    // Pass requirements from form to the layout engine
+    const layoutInput = {
+      ...input,
+      requirements: input.requirements || {},
+    };
+
+    const layout = generateLayout(layoutInput);
     res.json(layout);
   } catch (err) {
     console.error('Layout generation error:', err);
@@ -132,15 +96,18 @@ app.post('/api/generate', (req, res) => {
 
 
 app.post('/api/ai-generate', async (req, res) => {
-  const { plot, prompt, setbacks, orientation } = req.body;
-
   if (!process.env.FIREWORKS_API_KEY) {
     return res.status(401).json({ error: 'Fireworks API Key not configured on server.' });
   }
 
   try {
+    const { plot, prompt, setbacks, orientation, requirements } = req.body;
     const plotWithDetails = { ...plot, setbacks, orientation };
-    const fullPrompt = `Plot Info: ${JSON.stringify(plotWithDetails)}\nUser Description: ${prompt}`;
+    const fullPrompt = `Plot Info: ${JSON.stringify(plotWithDetails)}\nRequirements: ${JSON.stringify(requirements)}\nUser Description: ${prompt}`;
+
+    console.log('--- AI GENERATION START ---');
+    console.log('Model:', MODEL);
+    console.log('Prompt Length:', fullPrompt.length);
 
     const result = await fireworks.chat.completions.create({
       model: MODEL,
@@ -151,6 +118,7 @@ app.post('/api/ai-generate', async (req, res) => {
       response_format: { type: 'json_object' }
     });
 
+    console.log('AI Response Received successfully');
     const responseText = result.choices[0].message.content;
 
     let layout;
@@ -167,33 +135,49 @@ app.post('/api/ai-generate', async (req, res) => {
     }
 
 
-    const currentSetbacks = setbacks || { top: 3, bottom: 3, left: 3, right: 3 };
+    const currentSetbacks = layout.setbacks || setbacks || { top: 3, bottom: 3, left: 3, right: 3 };
     const maxBuildingWidth = plot.width - currentSetbacks.left - currentSetbacks.right;
     const maxBuildingHeight = plot.height - currentSetbacks.top - currentSetbacks.bottom;
 
     const correctedRooms = layout.rooms.map(room => ({
       ...room,
       id: room.id || Math.random().toString(36).substring(2, 9),
-
       width: Math.max(Math.min(room.width || 10, maxBuildingWidth), 3),
       height: Math.max(Math.min(room.height || 10, maxBuildingHeight), 3),
       wallHeight: room.wallHeight || 10,
       x: room.x || currentSetbacks.left,
-      y: room.y || currentSetbacks.top
+      y: room.y || currentSetbacks.top,
+      label: room.label || `${room.type.toUpperCase()} ${room.width}FT X ${room.height}FT`
     }));
 
 
-    layout.rooms = resolveOverlaps(correctedRooms, plot, currentSetbacks);
-    layout.plot = { ...plot, setbacks: currentSetbacks, orientation: orientation || 'North' };
+    const engineInput = {
+      plot,
+      rooms: correctedRooms,
+      setbacks: currentSetbacks,
+      orientation: orientation || 'North',
+      requirements: { ...requirements, ...(layout.requirements || {}), corridorWidth: layout.corridorWidth }
+    };
 
-    res.json(layout);
+    const finalLayout = generateLayout(engineInput);
+    if (!finalLayout.feedback) {
+      finalLayout.feedback = layout.feedback || "Geometrically optimized the AI semantic room choices for perfect structure.";
+    }
+
+    res.json(finalLayout);
   } catch (err) {
-    console.error('AI Generation error:', err);
-    res.status(500).json({ error: 'AI failed to generate layout. Please try a more specific prompt.' });
+    console.error('AI Generation error:', err.message);
+    if (err.cause) console.error('Cause:', err.cause);
+    
+    let userMessage = 'AI failed to generate layout. Please try again.';
+    if (err.message.includes('Connection error')) {
+      userMessage = 'Connection to Fireworks AI timed out. Please check your internet connection or try again later.';
+    }
+    
+    res.status(500).json({ error: userMessage });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
