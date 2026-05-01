@@ -17,8 +17,8 @@ import * as THREE from 'three';
 const FEET_TO_UNITS = 20;
 
 const Wall = ({ position, rotation, args, color, isDark = true }) => {
-  const wallColor = color || (isDark ? "#334155" : "#cbd5e1");
-  const baseboardColor = isDark ? "#1e293b" : "#ffffff";
+  const wallColor = color || (isDark ? "#2a332e" : "#cbd5e1");
+  const baseboardColor = isDark ? "#181820" : "#ffffff";
   return (
     <group position={position} rotation={rotation}>
       <mesh castShadow receiveShadow>
@@ -228,18 +228,18 @@ const Room3D = ({ room, isDark = true }) => {
             anchorX="center"
             anchorY="middle"
             outlineWidth={1.5}
-            outlineColor={isDark ? "#090d16" : "#ffffff"}
+            outlineColor={isDark ? "#09090c" : "#ffffff"}
           >
             {type.toUpperCase()}
           </Text>
           <Text
             fontSize={11}
-            color={isDark ? "#94a3b8" : "#334155"}
+            color={isDark ? "#a1a1aa" : "#334155"}
             position={[0, -15, 0]}
             anchorX="center"
             anchorY="middle"
             outlineWidth={1}
-            outlineColor={isDark ? "#090d16" : "#ffffff"}
+            outlineColor={isDark ? "#09090c" : "#ffffff"}
           >
             {`${width}' x ${height}'`}
           </Text>
@@ -389,7 +389,7 @@ const FloorPlan3D = ({ layout, theme = 'dark' }) => {
             gl.shadowMap.type = THREE.PCFShadowMap;
           }}
         >
-          <color attach="background" args={[isDark ? '#070a12' : '#f0f9ff']} />
+          <color attach="background" args={[isDark ? '#09090c' : '#f0f9ff']} />
           {isDark ? (
             <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
           ) : (
@@ -425,12 +425,12 @@ const FloorPlan3D = ({ layout, theme = 'dark' }) => {
           {}
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[(plot.width * FEET_TO_UNITS) / 2, -2, (plot.height * FEET_TO_UNITS) / 2]} receiveShadow>
             <planeGeometry args={[plot.width * 10 * FEET_TO_UNITS, plot.height * 10 * FEET_TO_UNITS]} />
-            <meshStandardMaterial color={isDark ? '#0b1120' : '#f8fafc'} />
+            <meshStandardMaterial color={isDark ? '#111116' : '#f8fafc'} />
           </mesh>
           <Grid
             infiniteGrid
-            cellColor={isDark ? '#1e293b' : '#cbd5e1'}
-            sectionColor={isDark ? '#3b82f6' : '#be123c'}
+            cellColor={isDark ? '#262630' : '#cbd5e1'}
+            sectionColor={isDark ? '#10b981' : '#be123c'}
             cellSize={FEET_TO_UNITS}
             sectionSize={FEET_TO_UNITS * 5}
             fadeDistance={5000}

@@ -12,12 +12,12 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   if (!layout || !layout.rooms) return null;
 
   const isDark = theme !== 'light';
-  const WALL_COLOR = isDark ? '#38bdf8' : '#b01d5a';
-  const SHEET_BG = isDark ? '#0f172a' : '#ffffff';
-  const SHEET_BORDER = isDark ? '#1e293b' : '#e2e8f0';
-  const SETBACK_COLOR = isDark ? '#334155' : '#cbd5e1';
+  const WALL_COLOR = isDark ? '#10b981' : '#059669';
+  const SHEET_BG = isDark ? '#111116' : '#ffffff';
+  const SHEET_BORDER = isDark ? '#262630' : '#e4e4e7';
+  const SETBACK_COLOR = isDark ? '#3f3f46' : '#cbd5e1';
   const CUTOUT_FILL = SHEET_BG;
-  const LEGEND_BG = isDark ? '#151e30' : '#ffffff';
+  const LEGEND_BG = isDark ? '#181820' : '#ffffff';
 
   const { plot, rooms, components = [], entry } = layout;
   const setbacks = plot.setbacks || { top: 0, bottom: 0, left: 0, right: 0 };
@@ -507,7 +507,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                   height={roomH}
                   stroke={WALL_COLOR}
                   strokeWidth={WALL_THICKNESS}
-                  fill={room.type === 'corridor' ? (isDark ? '#1e293b' : '#fffbfc') : room.type === 'parking' ? (isDark ? '#151e30' : '#fef9fa') : 'transparent'}
+                  fill={room.type === 'corridor' ? (isDark ? '#1a1a22' : '#fffbfc') : room.type === 'parking' ? (isDark ? '#15151c' : '#fef9fa') : 'transparent'}
                 />
 
                 {/* Kitchen slab detail */}

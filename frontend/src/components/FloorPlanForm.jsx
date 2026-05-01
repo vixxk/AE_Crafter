@@ -85,7 +85,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
     <div className="sidebar">
       <div className="sidebar-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ background: 'var(--primary-color)', padding: '10px', borderRadius: '12px', display: 'flex', boxShadow: '0 4px 10px rgba(59, 130, 246, 0.4)' }}>
+          <div style={{ background: 'var(--primary-color)', padding: '10px', borderRadius: '12px', display: 'flex', boxShadow: '0 4px 14px var(--primary-glow)' }}>
             <Home size={24} color="white" />
           </div>
           <div>

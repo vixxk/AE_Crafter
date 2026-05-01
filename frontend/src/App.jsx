@@ -245,7 +245,7 @@ function App() {
                 borderRadius: '10px'
               }}
             >
-              {theme === 'dark' ? <Sun size={17} color="#f59e0b" /> : <Moon size={17} color="#6366f1" />}
+              {theme === 'dark' ? <Sun size={17} color="#f59e0b" /> : <Moon size={17} color="#10b981" />}
               <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{theme === 'dark' ? 'Dark' : 'Light'}</span>
             </button>
 

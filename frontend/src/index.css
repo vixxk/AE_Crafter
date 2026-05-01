@@ -1,66 +1,66 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  /* Default: Modern Architectural Dark Mode */
-  --primary-color: #3b82f6; /* Electric Azure */
-  --primary-hover: #2563eb;
-  --primary-glow: rgba(59, 130, 246, 0.3);
-  --secondary-color: #1e293b;
-  --accent-color: #38bdf8;
-  --bg-color: #090d16;
-  --card-bg: #0f172a;
-  --card-bg-elevated: #1e293b;
-  --text-color: #f8fafc;
-  --text-muted: #94a3b8;
-  --border-color: #1e293b;
-  --border-focus: #3b82f6;
-  --glass-bg: rgba(15, 23, 42, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --input-bg: #151e30;
-  --input-border: #27354a;
-  --sidebar-footer-bg: #0b1120;
-  --header-bg: #0f172a;
-  --canvas-bg: #070a12;
-  --btn-secondary-bg: #1e293b;
-  --btn-secondary-text: #f1f5f9;
-  --btn-secondary-hover: #2d3d57;
-  --view-controls-bg: #151e30;
-  --view-btn-active-bg: #0f172a;
-  --view-btn-active-text: #38bdf8;
-  --room-item-bg: #151e30;
+  /* Default: Modern Architectural Dark Mode (Emerald / Neutral Obsidian) */
+  --primary-color: #10b981; /* Emerald Green */
+  --primary-hover: #059669;
+  --primary-glow: rgba(16, 185, 129, 0.28);
+  --secondary-color: #22222a;
+  --accent-color: #34d399; /* Mint Green */
+  --bg-color: #0a0a0d;
+  --card-bg: #141419;
+  --card-bg-elevated: #1e1e26;
+  --text-color: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --border-color: #262630;
+  --border-focus: #10b981;
+  --glass-bg: rgba(20, 20, 25, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --input-bg: #181820;
+  --input-border: #2c2c38;
+  --sidebar-footer-bg: #0d0d12;
+  --header-bg: #141419;
+  --canvas-bg: #09090c;
+  --btn-secondary-bg: #1e1e26;
+  --btn-secondary-text: #f4f4f5;
+  --btn-secondary-hover: #292934;
+  --view-controls-bg: #181820;
+  --view-btn-active-bg: #141419;
+  --view-btn-active-text: #34d399;
+  --room-item-bg: #181820;
   --remove-btn-bg: rgba(239, 68, 68, 0.15);
   --remove-btn-color: #f87171;
   --remove-btn-hover: rgba(239, 68, 68, 0.28);
-  --shadow-panel: 0 20px 40px -15px rgba(0, 0, 0, 0.65);
+  --shadow-panel: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
 }
 
 [data-theme="light"] {
-  --primary-color: #3b82f6;
-  --primary-hover: #2563eb;
-  --primary-glow: rgba(59, 130, 246, 0.15);
-  --secondary-color: #2563eb;
-  --accent-color: #0ea5e9;
-  --bg-color: #f8fafc;
+  --primary-color: #059669;
+  --primary-hover: #047857;
+  --primary-glow: rgba(5, 150, 105, 0.18);
+  --secondary-color: #059669;
+  --accent-color: #10b981;
+  --bg-color: #f8faf9;
   --card-bg: #ffffff;
-  --card-bg-elevated: #f1f5f9;
-  --text-color: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --border-focus: #3b82f6;
+  --card-bg-elevated: #f0f4f2;
+  --text-color: #18181b;
+  --text-muted: #71717a;
+  --border-color: #e4e4e7;
+  --border-focus: #059669;
   --glass-bg: rgba(255, 255, 255, 0.9);
-  --glass-border: #e2e8f0;
-  --input-bg: #f1f5f9;
-  --input-border: #e2e8f0;
-  --sidebar-footer-bg: #f8fafc;
+  --glass-border: #e4e4e7;
+  --input-bg: #f4f4f5;
+  --input-border: #e4e4e7;
+  --sidebar-footer-bg: #f8faf9;
   --header-bg: #ffffff;
-  --canvas-bg: #f8fafc;
-  --btn-secondary-bg: #f1f5f9;
-  --btn-secondary-text: #0f172a;
-  --btn-secondary-hover: #e2e8f0;
-  --view-controls-bg: #f1f5f9;
+  --canvas-bg: #f8faf9;
+  --btn-secondary-bg: #f4f4f5;
+  --btn-secondary-text: #18181b;
+  --btn-secondary-hover: #e4e4e7;
+  --view-controls-bg: #f4f4f5;
   --view-btn-active-bg: #ffffff;
-  --view-btn-active-text: #3b82f6;
-  --room-item-bg: #f8fafc;
+  --view-btn-active-text: #059669;
+  --room-item-bg: #f8faf9;
   --remove-btn-bg: #fef2f2;
   --remove-btn-color: #ef4444;
   --remove-btn-hover: #fee2e2;
