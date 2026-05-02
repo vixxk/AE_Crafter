@@ -16,6 +16,7 @@ import {
 import FloorPlanForm from './components/FloorPlanForm';
 import FloorPlan2D from './components/FloorPlan2D';
 import FloorPlan3D from './components/FloorPlan3D';
+import HomeSkeleton from './components/HomeSkeleton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -28,6 +29,7 @@ function App() {
   const [layout, setLayout] = useState(null);
   const [view, setView] = useState('2D');
   const [loading, setLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState(null);
   const [mode, setGenerationMode] = useState('manual');
@@ -41,7 +43,7 @@ function App() {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  const handleGenerate = async (input, isAI = false) => {
+  const handleGenerate = async (input, isAI = false, isInitial = false) => {
     setLoading(true);
     setError(null);
     setGenerationMode(isAI ? 'ai' : 'manual');
@@ -53,7 +55,12 @@ function App() {
       console.error('API Error:', err);
       setError(err.response?.data?.error || 'Could not reach backend server. Please ensure node backend/index.js is running.');
     } finally {
-      setTimeout(() => setLoading(false), 500);
+      setTimeout(() => {
+        setLoading(false);
+        if (isInitial) {
+          setIsInitialLoading(false);
+        }
+      }, 500);
     }
   };
 
@@ -208,7 +215,7 @@ function App() {
         numWindows: 6,
         numVentilators: 1,
       }
-    });
+    }, false, true);
   }, []);
 
   return (
@@ -301,7 +308,11 @@ function App() {
             </div>
           )}
 
-          {!error && layout && (
+          {!error && isInitialLoading && (
+            <HomeSkeleton />
+          )}
+
+          {!error && !isInitialLoading && layout && (
             <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
               <div style={{ display: view === '2D' ? 'block' : 'none', width: '100%', height: '100%' }}>
                 <FloorPlan2D layout={layout} onRoomUpdate={handleUpdateRoom} theme={theme} />

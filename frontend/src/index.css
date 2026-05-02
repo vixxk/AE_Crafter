@@ -399,6 +399,49 @@ select option {
   animation: spin 1s linear infinite;
 }
 
+/* Skeleton Loading Shimmer & Pulse */
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes skeletonPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(0.995);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(16, 185, 129, 0.08) 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 2.2s infinite ease-in-out;
+}
+
+.skeleton-pulse {
+  animation: skeletonPulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* Mobile Responsive Adjustments */
 @media (max-width: 1024px) {
   .app-container {
