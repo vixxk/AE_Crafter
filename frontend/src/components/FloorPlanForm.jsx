@@ -103,12 +103,13 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
             flex: 1,
             padding: '12px',
             borderRadius: '12px',
-            border: 'none',
-            background: mode === 'manual' ? 'var(--primary-color)' : '#f1f5f9',
+            border: mode === 'manual' ? 'none' : '1px solid var(--border-color)',
+            background: mode === 'manual' ? 'var(--primary-color)' : 'var(--input-bg)',
             color: mode === 'manual' ? 'white' : 'var(--text-muted)',
             fontWeight: 'bold',
             cursor: 'pointer',
-            fontSize: '0.85rem'
+            fontSize: '0.85rem',
+            transition: 'all 0.2s ease'
           }}
         >
           Manual Design
@@ -120,12 +121,13 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
             flex: 1,
             padding: '12px',
             borderRadius: '12px',
-            border: 'none',
-            background: mode === 'ai' ? 'var(--primary-color)' : '#f1f5f9',
+            border: mode === 'ai' ? 'none' : '1px solid var(--border-color)',
+            background: mode === 'ai' ? 'var(--primary-color)' : 'var(--input-bg)',
             color: mode === 'ai' ? 'white' : 'var(--text-muted)',
             fontWeight: 'bold',
             cursor: 'pointer',
-            fontSize: '0.85rem'
+            fontSize: '0.85rem',
+            transition: 'all 0.2s ease'
           }}
         >
           AI Brain
@@ -186,7 +188,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
               <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Component Library
               </div>
-              <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+              <div style={{ background: 'var(--card-bg-elevated)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
                 <label>Space Category</label>
                 <select
                   value={newRoom.type}
@@ -237,7 +239,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
             <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               AI Prompt
             </div>
-            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+            <div style={{ background: 'var(--card-bg-elevated)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
               <label>Detailed Request</label>
               <textarea
                 value={aiPrompt}
@@ -246,8 +248,8 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
                 style={{
                   width: '100%',
                   height: '100px',
-                  background: 'white',
-                  border: '1.5px solid var(--border-color)',
+                  background: 'var(--input-bg)',
+                  border: '1.5px solid var(--input-border)',
                   borderRadius: '12px',
                   color: 'var(--text-color)',
                   padding: '12px',

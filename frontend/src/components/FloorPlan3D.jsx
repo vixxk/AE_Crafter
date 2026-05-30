@@ -16,23 +16,25 @@ import * as THREE from 'three';
 
 const FEET_TO_UNITS = 20;
 
-const Wall = ({ position, rotation, args, color = "#cbd5e1" }) => {
+const Wall = ({ position, rotation, args, color, isDark = true }) => {
+  const wallColor = color || (isDark ? "#334155" : "#cbd5e1");
+  const baseboardColor = isDark ? "#1e293b" : "#ffffff";
   return (
     <group position={position} rotation={rotation}>
       <mesh castShadow receiveShadow>
         <boxGeometry args={args} />
         <meshStandardMaterial
-          color={color}
+          color={wallColor}
           roughness={0.7}
           metalness={0.2}
           transparent
-          opacity={0.7}
+          opacity={0.75}
         />
       </mesh>
       {}
       <mesh position={[0, -args[1] / 2 + 0.3, args[2] / 2 + 0.1]}>
         <boxGeometry args={[args[0], 0.6, 0.4]} />
-        <meshStandardMaterial color="#ffffff" />
+        <meshStandardMaterial color={baseboardColor} />
       </mesh>
     </group>
   );
@@ -190,7 +192,7 @@ const KitchenCounter = ({ width, height }) => (
   </group>
 );
 
-const Room3D = ({ room }) => {
+const Room3D = ({ room, isDark = true }) => {
   const { width, height, wallHeight: rawWallHeight, x, y, type } = room;
   const wallHeight = rawWallHeight || 10;
   const color = getRoomColor(type);
@@ -222,22 +224,22 @@ const Room3D = ({ room }) => {
         <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
           <Text
             fontSize={15}
-            color="#0f172a"
+            color={isDark ? "#f8fafc" : "#0f172a"}
             anchorX="center"
             anchorY="middle"
             outlineWidth={1.5}
-            outlineColor="#ffffff"
+            outlineColor={isDark ? "#090d16" : "#ffffff"}
           >
             {type.toUpperCase()}
           </Text>
           <Text
             fontSize={11}
-            color="#334155"
+            color={isDark ? "#94a3b8" : "#334155"}
             position={[0, -15, 0]}
             anchorX="center"
             anchorY="middle"
             outlineWidth={1}
-            outlineColor="#ffffff"
+            outlineColor={isDark ? "#090d16" : "#ffffff"}
           >
             {`${width}' x ${height}'`}
           </Text>
@@ -350,13 +352,13 @@ const Room3D = ({ room }) => {
       )}
 
       {}
-      <Wall position={[-w / 2, wh / 2, 0]} rotation={[0, Math.PI / 2, 0]} args={[h, wh, 2]} />
-      <Wall position={[w / 2, wh / 2, 0]} rotation={[0, Math.PI / 2, 0]} args={[h, wh, 2]} />
-      <Wall position={[0, wh / 2, -h / 2]} rotation={[0, 0, 0]} args={[w, wh, 2]} />
+      <Wall position={[-w / 2, wh / 2, 0]} rotation={[0, Math.PI / 2, 0]} args={[h, wh, 2]} isDark={isDark} />
+      <Wall position={[w / 2, wh / 2, 0]} rotation={[0, Math.PI / 2, 0]} args={[h, wh, 2]} isDark={isDark} />
+      <Wall position={[0, wh / 2, -h / 2]} rotation={[0, 0, 0]} args={[w, wh, 2]} isDark={isDark} />
 
       {}
       <group position={[0, wh / 2, h / 2]}>
-        <Wall position={[0, 0, 0]} rotation={[0, 0, 0]} args={[w, wh, 2]} />
+        <Wall position={[0, 0, 0]} rotation={[0, 0, 0]} args={[w, wh, 2]} isDark={isDark} />
         <group position={[0, 5, 2]}>
           <Window width={60} height={40} />
         </group>
@@ -365,8 +367,9 @@ const Room3D = ({ room }) => {
   );
 };
 
-const FloorPlan3D = ({ layout }) => {
+const FloorPlan3D = ({ layout, theme = 'dark' }) => {
   if (!layout || !layout.rooms) return null;
+  const isDark = theme !== 'light';
   const { plot, rooms } = layout;
   const wh = (rooms[0]?.wallHeight || 10) * FEET_TO_UNITS;
 
@@ -386,14 +389,18 @@ const FloorPlan3D = ({ layout }) => {
             gl.shadowMap.type = THREE.PCFShadowMap;
           }}
         >
-          <color attach="background" args={['#f0f9ff']} />
-          <Sky distance={450000} sunPosition={[5, 1, 8]} inclination={0} azimuth={1} />
+          <color attach="background" args={[isDark ? '#070a12' : '#f0f9ff']} />
+          {isDark ? (
+            <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+          ) : (
+            <Sky distance={450000} sunPosition={[5, 1, 8]} inclination={0} azimuth={1} />
+          )}
 
-          <ambientLight intensity={0.7} />
-          <pointLight position={[plot.width * FEET_TO_UNITS / 2, wh * 3, plot.height * FEET_TO_UNITS / 2]} intensity={5.0} castShadow />
+          <ambientLight intensity={isDark ? 0.9 : 0.7} />
+          <pointLight position={[plot.width * FEET_TO_UNITS / 2, wh * 3, plot.height * FEET_TO_UNITS / 2]} intensity={isDark ? 7.0 : 5.0} castShadow />
           <directionalLight
             position={[5000, 10000, 5000]}
-            intensity={2.0}
+            intensity={isDark ? 1.5 : 2.0}
             castShadow
             shadow-camera-left={-5000}
             shadow-camera-right={5000}
@@ -402,7 +409,7 @@ const FloorPlan3D = ({ layout }) => {
             shadow-mapSize={[4096, 4096]}
           />
 
-          <Environment preset="city" />
+          <Environment preset={isDark ? "night" : "city"} />
 
           {}
           <ContactShadows
@@ -418,19 +425,19 @@ const FloorPlan3D = ({ layout }) => {
           {}
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[(plot.width * FEET_TO_UNITS) / 2, -2, (plot.height * FEET_TO_UNITS) / 2]} receiveShadow>
             <planeGeometry args={[plot.width * 10 * FEET_TO_UNITS, plot.height * 10 * FEET_TO_UNITS]} />
-            <meshStandardMaterial color="#f8fafc" />
+            <meshStandardMaterial color={isDark ? '#0b1120' : '#f8fafc'} />
           </mesh>
           <Grid
             infiniteGrid
-            cellColor="#cbd5e1"
-            sectionColor="#be123c"
+            cellColor={isDark ? '#1e293b' : '#cbd5e1'}
+            sectionColor={isDark ? '#3b82f6' : '#be123c'}
             cellSize={FEET_TO_UNITS}
             sectionSize={FEET_TO_UNITS * 5}
             fadeDistance={5000}
             position={[(plot.width * FEET_TO_UNITS) / 2, -0.5, (plot.height * FEET_TO_UNITS) / 2]}
           />
           {rooms.map((room) => (
-            <Room3D key={room.id} room={room} />
+            <Room3D key={room.id} room={room} isDark={isDark} />
           ))}
 
           <OrbitControls makeDefault target={[(plot.width * FEET_TO_UNITS) / 2, 0, (plot.height * FEET_TO_UNITS) / 2]} />

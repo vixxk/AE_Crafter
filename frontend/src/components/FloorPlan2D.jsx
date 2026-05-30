@@ -2,16 +2,22 @@ import React, { useMemo } from 'react';
 import { Stage, Layer, Rect, Text, Group, Line, Arc, Arrow } from 'react-konva';
 
 const FEET_TO_PX = 20;
-const ARCH_COLOR = '#b01d5a';
 const WALL_THICKNESS = 2.5;
-const WALL_COLOR = ARCH_COLOR;
 const PILLAR_SIZE = 10;
 const DIM_OFFSET = 55;
 const DIM_TICK = 8;
 const FONT_FAMILY = 'Outfit, Arial, sans-serif';
 
-const FloorPlan2D = ({ layout }) => {
+const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   if (!layout || !layout.rooms) return null;
+
+  const isDark = theme !== 'light';
+  const WALL_COLOR = isDark ? '#38bdf8' : '#b01d5a';
+  const SHEET_BG = isDark ? '#0f172a' : '#ffffff';
+  const SHEET_BORDER = isDark ? '#1e293b' : '#e2e8f0';
+  const SETBACK_COLOR = isDark ? '#334155' : '#cbd5e1';
+  const CUTOUT_FILL = SHEET_BG;
+  const LEGEND_BG = isDark ? '#151e30' : '#ffffff';
 
   const { plot, rooms, components = [], entry } = layout;
   const setbacks = plot.setbacks || { top: 0, bottom: 0, left: 0, right: 0 };
@@ -93,7 +99,7 @@ const FloorPlan2D = ({ layout }) => {
 
     return (
       <Group key={room.id} x={room.x * FEET_TO_PX} y={room.y * FEET_TO_PX}>
-        <Rect width={roomW} height={roomH} stroke={WALL_COLOR} strokeWidth={WALL_THICKNESS} fill="#ffffff" />
+        <Rect width={roomW} height={roomH} stroke={WALL_COLOR} strokeWidth={WALL_THICKNESS} fill={SHEET_BG} />
         {Array.from({ length: steps }).map((_, i) => (
           <Line
             key={`step-${i}`}
@@ -182,7 +188,7 @@ const FloorPlan2D = ({ layout }) => {
       return (
         <Group key={`door-${index}`} x={pxX} y={pxY}>
           {/* Door gap (clear wall) */}
-          <Rect x={-3} y={0} width={6} height={actualW} fill="white" />
+          <Rect x={-3} y={0} width={6} height={actualW} fill={CUTOUT_FILL} />
           {/* Door leaf line */}
           <Line points={[0, 0, 0, actualW]} stroke={WALL_COLOR} strokeWidth={1.5} />
           {/* Swing arc */}
@@ -215,7 +221,7 @@ const FloorPlan2D = ({ layout }) => {
     return (
       <Group key={`door-${index}`} x={pxX} y={pxY}>
         {/* Door gap */}
-        <Rect x={0} y={-3} width={actualW} height={6} fill="white" />
+        <Rect x={0} y={-3} width={actualW} height={6} fill={CUTOUT_FILL} />
         {/* Door leaf line */}
         <Line points={[0, 0, actualW, 0]} stroke={WALL_COLOR} strokeWidth={1.5} />
         {/* Swing arc */}
@@ -260,7 +266,7 @@ const FloorPlan2D = ({ layout }) => {
             y={0}
             width={winDepth}
             height={winLen}
-            fill="white"
+            fill={CUTOUT_FILL}
             stroke={WALL_COLOR}
             strokeWidth={1.5}
           />
@@ -281,7 +287,7 @@ const FloorPlan2D = ({ layout }) => {
           y={-winDepth / 2}
           width={winLen}
           height={winDepth}
-          fill="white"
+          fill={CUTOUT_FILL}
           stroke={WALL_COLOR}
           strokeWidth={1.5}
         />
@@ -302,7 +308,7 @@ const FloorPlan2D = ({ layout }) => {
     if (comp.orientation === 'vertical') {
       return (
         <Group key={`vent-${index}`} x={pxX} y={pxY}>
-          <Rect x={-ventDepth / 2} y={0} width={ventDepth} height={ventLen} fill="white" stroke={WALL_COLOR} strokeWidth={1} />
+          <Rect x={-ventDepth / 2} y={0} width={ventDepth} height={ventLen} fill={CUTOUT_FILL} stroke={WALL_COLOR} strokeWidth={1} />
           <Line points={[0, 0, 0, ventLen]} stroke={WALL_COLOR} strokeWidth={0.8} dash={[2, 2]} />
           <Text text="V" x={-ventDepth - 6} y={ventLen / 2 - 5} fontSize={10} fill={WALL_COLOR} fontStyle="bold" fontFamily={FONT_FAMILY} />
         </Group>
@@ -311,7 +317,7 @@ const FloorPlan2D = ({ layout }) => {
 
     return (
       <Group key={`vent-${index}`} x={pxX} y={pxY}>
-        <Rect x={0} y={-ventDepth / 2} width={ventLen} height={ventDepth} fill="white" stroke={WALL_COLOR} strokeWidth={1} />
+        <Rect x={0} y={-ventDepth / 2} width={ventLen} height={ventDepth} fill={CUTOUT_FILL} stroke={WALL_COLOR} strokeWidth={1} />
         <Line points={[0, 0, ventLen, 0]} stroke={WALL_COLOR} strokeWidth={0.8} dash={[2, 2]} />
         <Text text="V" x={ventLen / 2 - 4} y={-ventDepth - 10} fontSize={10} fill={WALL_COLOR} fontStyle="bold" fontFamily={FONT_FAMILY} />
       </Group>
@@ -393,7 +399,7 @@ const FloorPlan2D = ({ layout }) => {
   const envPxH = buildEnvelope.height * FEET_TO_PX;
 
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>
+    <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--canvas-bg)' }}>
       <Stage
         width={stageWidth}
         height={stageHeight}
@@ -406,9 +412,9 @@ const FloorPlan2D = ({ layout }) => {
           <Rect
             width={plotPxWidth}
             height={plotPxHeight}
-            fill="white"
-            stroke="#e2e8f0"
-            strokeWidth={0.5}
+            fill={SHEET_BG}
+            stroke={SHEET_BORDER}
+            strokeWidth={1}
           />
 
           {/* ─── Setback Boundary (dashed) ─────────────────────────── */}
@@ -417,8 +423,8 @@ const FloorPlan2D = ({ layout }) => {
             y={setbacks.top * FEET_TO_PX}
             width={(plot.width - setbacks.left - setbacks.right) * FEET_TO_PX}
             height={(plot.height - setbacks.top - setbacks.bottom) * FEET_TO_PX}
-            stroke="#e2e8f0"
-            strokeWidth={0.5}
+            stroke={SETBACK_COLOR}
+            strokeWidth={0.8}
             dash={[6, 4]}
           />
 
@@ -501,7 +507,7 @@ const FloorPlan2D = ({ layout }) => {
                   height={roomH}
                   stroke={WALL_COLOR}
                   strokeWidth={WALL_THICKNESS}
-                  fill={room.type === 'corridor' ? '#fffbfc' : room.type === 'parking' ? '#fef9fa' : 'transparent'}
+                  fill={room.type === 'corridor' ? (isDark ? '#1e293b' : '#fffbfc') : room.type === 'parking' ? (isDark ? '#151e30' : '#fef9fa') : 'transparent'}
                 />
 
                 {/* Kitchen slab detail */}
@@ -606,7 +612,7 @@ const FloorPlan2D = ({ layout }) => {
 
           {/* ─── Legend Table ────────────────────────────────────────── */}
           <Group x={envPxX + envPxW + 30} y={envPxY}>
-            <Rect width={190} height={100} stroke={WALL_COLOR} strokeWidth={1.5} fill="white" cornerRadius={4} />
+            <Rect width={190} height={100} stroke={WALL_COLOR} strokeWidth={1.5} fill={LEGEND_BG} cornerRadius={6} />
             <Text text="LEGEND" x={10} y={8} fontSize={13} fill={WALL_COLOR} fontStyle="900" fontFamily={FONT_FAMILY} />
             <Line points={[10, 24, 180, 24]} stroke={WALL_COLOR} strokeWidth={0.5} />
             <Text text="DOOR (D) = 7FT X 3FT" x={10} y={32} fontSize={11} fill={WALL_COLOR} fontStyle="bold" fontFamily={FONT_FAMILY} />
