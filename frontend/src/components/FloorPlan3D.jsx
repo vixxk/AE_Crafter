@@ -13,6 +13,7 @@ import {
   Environment
 } from '@react-three/drei';
 import * as THREE from 'three';
+import ThreeDSkeleton from './ThreeDSkeleton';
 
 const FEET_TO_UNITS = 20;
 
@@ -375,7 +376,7 @@ const FloorPlan3D = ({ layout, theme = 'dark' }) => {
 
   return (
     <div style={{ width: '100%', height: '100%', cursor: 'move' }}>
-      <Suspense fallback={<div className="loading-spinner" />}>
+      <Suspense fallback={<ThreeDSkeleton isSuspense />}>
         <Canvas
           shadows
           gl={{ preserveDrawingBuffer: true }}

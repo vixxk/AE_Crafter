@@ -221,17 +221,42 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
               <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Room Inventory
               </div>
-              {rooms.map(room => (
-                <div key={room.id} className="room-list-item">
-                  <div className="room-info">
-                    <span className="room-name">{room.type}</span>
-                    <span className="room-details">{room.width} x {room.height} ft</span>
-                  </div>
-                  <button className="remove-btn" onClick={() => handleRemoveRoom(room.id)}>
-                    <Trash2 size={16} />
-                  </button>
+              {isGenerating ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {[1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="room-list-item skeleton-shimmer"
+                      style={{
+                        height: '52px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 14px',
+                        opacity: 0.85
+                      }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ width: '90px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
+                        <div style={{ width: '50px', height: '9px', borderRadius: '3px', background: 'rgba(16, 185, 129, 0.2)' }} />
+                      </div>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.04)' }} />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              ) : (
+                rooms.map(room => (
+                  <div key={room.id} className="room-list-item">
+                    <div className="room-info">
+                      <span className="room-name">{room.type}</span>
+                      <span className="room-details">{room.width} x {room.height} ft</span>
+                    </div>
+                    <button className="remove-btn" onClick={() => handleRemoveRoom(room.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))
+              )}
             </section>
           </>
         ) : (
@@ -260,6 +285,33 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
                 }}
               />
               {/* Tip removed for UI clarity */}
+              {isGenerating && (
+                <div
+                  className="skeleton-shimmer"
+                  style={{
+                    marginTop: '10px',
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: 'var(--primary-color)',
+                      boxShadow: '0 0 8px var(--primary-color)'
+                    }}
+                  />
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-color)', fontWeight: '600' }}>
+                    AI Synthesizing room layout & orientation...
+                  </span>
+                </div>
+              )}
             </div>
           </section>
         )}

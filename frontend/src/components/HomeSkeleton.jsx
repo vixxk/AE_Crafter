@@ -1,7 +1,7 @@
 import React from 'react';
 import { Compass, Layers, Sparkles } from 'lucide-react';
 
-const HomeSkeleton = () => {
+const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
   return (
     <div
       style={{
@@ -259,10 +259,16 @@ const HomeSkeleton = () => {
         </span>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-color)' }}>
-            Generating Architectural Layout...
+            {mode === 'ai'
+              ? 'AI Engine Synthesizing Layout...'
+              : isRebuilding
+              ? 'Rebuilding 2D Floor Plan...'
+              : 'Generating Architectural Layout...'}
           </span>
           <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-            Calibrating site dimensions, setbacks & room placement
+            {mode === 'ai'
+              ? 'Parsing prompt requirements, space sizing & circulation paths'
+              : 'Calibrating site dimensions, setbacks & structural pillars'}
           </span>
         </div>
       </div>

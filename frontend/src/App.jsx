@@ -17,6 +17,7 @@ import FloorPlanForm from './components/FloorPlanForm';
 import FloorPlan2D from './components/FloorPlan2D';
 import FloorPlan3D from './components/FloorPlan3D';
 import HomeSkeleton from './components/HomeSkeleton';
+import ThreeDSkeleton from './components/ThreeDSkeleton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -309,7 +310,11 @@ function App() {
           )}
 
           {!error && isInitialLoading && (
-            <HomeSkeleton />
+            view === '2D' ? (
+              <HomeSkeleton mode={mode} />
+            ) : (
+              <ThreeDSkeleton mode={mode} />
+            )
           )}
 
           {!error && !isInitialLoading && layout && (
@@ -322,9 +327,12 @@ function App() {
               </div>
 
               {loading && (
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: theme === 'dark' ? 'rgba(9, 13, 22, 0.8)' : 'rgba(255,255,255,0.7)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <div className="loading-spinner" />
-                  <p style={{ fontWeight: '600', color: 'var(--text-color)', marginTop: '8px' }}>Generating...</p>
+                <div style={{ position: 'absolute', inset: 0, zIndex: 100 }}>
+                  {view === '2D' ? (
+                    <HomeSkeleton mode={mode} isRebuilding={true} />
+                  ) : (
+                    <ThreeDSkeleton mode={mode} />
+                  )}
                 </div>
               )}
             </div>
