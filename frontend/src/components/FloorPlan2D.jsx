@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Stage, Layer, Rect, Text, Group, Line, Arc, Arrow } from 'react-konva';
+import { Layers, ChevronDown, ChevronUp } from 'lucide-react';
 
 const FEET_TO_PX = 20;
 const WALL_THICKNESS = 2.5;
@@ -9,6 +10,7 @@ const DIM_TICK = 8;
 const FONT_FAMILY = 'Outfit, Arial, sans-serif';
 
 const FloorPlan2D = ({ layout, theme = 'dark' }) => {
+  const [isLegendOpen, setIsLegendOpen] = useState(true);
   if (!layout || !layout.rooms) return null;
 
   const isDark = theme !== 'light';
@@ -17,7 +19,6 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   const SHEET_BORDER = isDark ? '#262630' : '#e4e4e7';
   const SETBACK_COLOR = isDark ? '#3f3f46' : '#cbd5e1';
   const CUTOUT_FILL = SHEET_BG;
-  const LEGEND_BG = isDark ? '#181820' : '#ffffff';
 
   const { plot, rooms, components = [], entry } = layout;
   const setbacks = plot.setbacks || { top: 0, bottom: 0, left: 0, right: 0 };
@@ -399,7 +400,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   const envPxH = buildEnvelope.height * FEET_TO_PX;
 
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--canvas-bg)' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--canvas-bg)', overflow: 'hidden' }}>
       <Stage
         width={stageWidth}
         height={stageHeight}
@@ -610,21 +611,139 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
             />
           </Group>
 
-          {/* ─── Legend Table ────────────────────────────────────────── */}
-          <Group x={envPxX + envPxW + 30} y={envPxY}>
-            <Rect width={190} height={100} stroke={WALL_COLOR} strokeWidth={1.5} fill={LEGEND_BG} cornerRadius={6} />
-            <Text text="LEGEND" x={10} y={8} fontSize={13} fill={WALL_COLOR} fontStyle="900" fontFamily={FONT_FAMILY} />
-            <Line points={[10, 24, 180, 24]} stroke={WALL_COLOR} strokeWidth={0.5} />
-            <Text text="DOOR (D) = 7FT X 3FT" x={10} y={32} fontSize={11} fill={WALL_COLOR} fontStyle="bold" fontFamily={FONT_FAMILY} />
-            <Text text="DOOR (D1) = 7FT X 4.5FT" x={10} y={50} fontSize={11} fill={WALL_COLOR} fontStyle="bold" fontFamily={FONT_FAMILY} />
-            <Text text="WINDOW (W) = 4FT X 3.2FT" x={10} y={68} fontSize={11} fill={WALL_COLOR} fontStyle="bold" fontFamily={FONT_FAMILY} />
-            <Text text="VENT (V) = 2FT X 2FT" x={10} y={86} fontSize={11} fill={WALL_COLOR} fontStyle="bold" fontFamily={FONT_FAMILY} />
-          </Group>
-
           {/* Title block removed for UI clarity - now handled in PDF export */}
 
         </Layer>
       </Stage>
+
+      {/* ─── Legend Panel Aside from the diagram ────────────────────── */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          background: 'var(--card-bg-elevated)',
+          border: '1px solid var(--border-color)',
+          borderRadius: '14px',
+          padding: isLegendOpen ? '14px 18px' : '10px 16px',
+          boxShadow: '0 12px 30px rgba(0, 0, 0, 0.45)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 40,
+          minWidth: '220px',
+          maxWidth: '260px',
+          transition: 'all 0.25s ease',
+          pointerEvents: 'auto',
+        }}
+      >
+        <div
+          onClick={() => setIsLegendOpen(!isLegendOpen)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            cursor: 'pointer',
+            userSelect: 'none',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Layers size={16} color="var(--primary-color)" />
+            <span
+              style={{
+                fontSize: '0.8rem',
+                fontWeight: '800',
+                letterSpacing: '0.5px',
+                color: 'var(--text-color)',
+                textTransform: 'uppercase',
+              }}
+            >
+              Plan Legend
+            </span>
+          </div>
+          <button
+            type="button"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--text-muted)',
+              display: 'flex',
+              padding: 0,
+            }}
+          >
+            {isLegendOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
+        </div>
+
+        {isLegendOpen && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '9px',
+              marginTop: '12px',
+              borderTop: '1px solid var(--border-color)',
+              paddingTop: '10px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                  D
+                </span>
+                <span style={{ color: 'var(--text-color)', fontWeight: '600' }}>Door (D)</span>
+              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>7' × 3'</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                  D1
+                </span>
+                <span style={{ color: 'var(--text-color)', fontWeight: '600' }}>Main Door (D1)</span>
+              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>7' × 4.5'</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                  W
+                </span>
+                <span style={{ color: 'var(--text-color)', fontWeight: '600' }}>Window (W)</span>
+              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>4' × 3.2'</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                  V
+                </span>
+                <span style={{ color: 'var(--text-color)', fontWeight: '600' }}>Vent (V)</span>
+              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>2' × 2'</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '10px', height: '10px', background: 'var(--primary-color)', borderRadius: '2px', marginLeft: '4px' }} />
+                <span style={{ color: 'var(--text-color)', fontWeight: '600', marginLeft: '4px' }}>Column Pillar</span>
+              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>10" × 10"</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '14px', height: '2px', borderTop: '2px dashed #a1a1aa', marginLeft: '2px' }} />
+                <span style={{ color: 'var(--text-color)', fontWeight: '600', marginLeft: '2px' }}>Setback Line</span>
+              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>Boundary</span>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
