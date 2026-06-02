@@ -616,23 +616,26 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
         </Layer>
       </Stage>
 
-      {/* ─── Legend Panel Aside from the diagram ────────────────────── */}
+      {/* ─── Legend Panel Aside from the diagram (Black & White) ────── */}
       <div
         style={{
           position: 'absolute',
           top: '20px',
           right: '20px',
-          background: 'var(--card-bg-elevated)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '14px',
+          background: isDark ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.96)',
+          border: `1.5px solid ${isDark ? '#ffffff' : '#000000'}`,
+          borderRadius: '12px',
           padding: isLegendOpen ? '14px 18px' : '10px 16px',
-          boxShadow: '0 12px 30px rgba(0, 0, 0, 0.45)',
+          boxShadow: isDark
+            ? '0 12px 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+            : '0 10px 25px rgba(0, 0, 0, 0.12)',
           backdropFilter: 'blur(12px)',
           zIndex: 40,
           minWidth: '220px',
           maxWidth: '260px',
           transition: 'all 0.25s ease',
           pointerEvents: 'auto',
+          color: isDark ? '#ffffff' : '#000000',
         }}
       >
         <div
@@ -647,14 +650,15 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Layers size={16} color="var(--primary-color)" />
+            <Layers size={16} color={isDark ? '#ffffff' : '#000000'} />
             <span
               style={{
                 fontSize: '0.8rem',
-                fontWeight: '800',
-                letterSpacing: '0.5px',
-                color: 'var(--text-color)',
+                fontWeight: '900',
+                letterSpacing: '0.8px',
+                color: isDark ? '#ffffff' : '#000000',
                 textTransform: 'uppercase',
+                fontFamily: FONT_FAMILY,
               }}
             >
               Plan Legend
@@ -666,7 +670,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: 'var(--text-muted)',
+              color: isDark ? '#ffffff' : '#000000',
               display: 'flex',
               padding: 0,
             }}
@@ -682,64 +686,135 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
               flexDirection: 'column',
               gap: '9px',
               marginTop: '12px',
-              borderTop: '1px solid var(--border-color)',
+              borderTop: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)'}`,
               paddingTop: '10px',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                <span
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '3px',
+                    background: isDark ? '#ffffff' : '#000000',
+                    color: isDark ? '#000000' : '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    fontWeight: '900',
+                    fontFamily: FONT_FAMILY,
+                  }}
+                >
                   D
                 </span>
-                <span style={{ color: 'var(--text-color)', fontWeight: '600' }}>Door (D)</span>
+                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Door (D)</span>
               </div>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>7' × 3'</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>7' × 3'</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                <span
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '3px',
+                    background: isDark ? '#ffffff' : '#000000',
+                    color: isDark ? '#000000' : '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    fontWeight: '900',
+                    fontFamily: FONT_FAMILY,
+                  }}
+                >
                   D1
                 </span>
-                <span style={{ color: 'var(--text-color)', fontWeight: '600' }}>Main Door (D1)</span>
+                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Main Door (D1)</span>
               </div>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>7' × 4.5'</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>7' × 4.5'</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                <span
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '3px',
+                    background: isDark ? '#ffffff' : '#000000',
+                    color: isDark ? '#000000' : '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    fontWeight: '900',
+                    fontFamily: FONT_FAMILY,
+                  }}
+                >
                   W
                 </span>
-                <span style={{ color: 'var(--text-color)', fontWeight: '600' }}>Window (W)</span>
+                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Window (W)</span>
               </div>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>4' × 3.2'</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>4' × 3.2'</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                <span
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '3px',
+                    background: isDark ? '#ffffff' : '#000000',
+                    color: isDark ? '#000000' : '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    fontWeight: '900',
+                    fontFamily: FONT_FAMILY,
+                  }}
+                >
                   V
                 </span>
-                <span style={{ color: 'var(--text-color)', fontWeight: '600' }}>Vent (V)</span>
+                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Vent (V)</span>
               </div>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>2' × 2'</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>2' × 2'</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '10px', height: '10px', background: 'var(--primary-color)', borderRadius: '2px', marginLeft: '4px' }} />
-                <span style={{ color: 'var(--text-color)', fontWeight: '600', marginLeft: '4px' }}>Column Pillar</span>
+                <span
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    background: isDark ? '#ffffff' : '#000000',
+                    borderRadius: '2px',
+                    marginLeft: '3px',
+                  }}
+                />
+                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700', marginLeft: '3px' }}>Column Pillar</span>
               </div>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>10" × 10"</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>10" × 10"</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '14px', height: '2px', borderTop: '2px dashed #a1a1aa', marginLeft: '2px' }} />
-                <span style={{ color: 'var(--text-color)', fontWeight: '600', marginLeft: '2px' }}>Setback Line</span>
+                <span
+                  style={{
+                    width: '16px',
+                    height: '2px',
+                    borderTop: `2px dashed ${isDark ? '#ffffff' : '#000000'}`,
+                    marginLeft: '1px',
+                  }}
+                />
+                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700', marginLeft: '1px' }}>Setback Line</span>
               </div>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>Boundary</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>Boundary</span>
             </div>
           </div>
         )}
