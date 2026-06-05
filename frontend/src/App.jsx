@@ -158,7 +158,7 @@ function App() {
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
-      doc.text('AE-CRAFTER ENGINE V2.0', boxX + 5, boxY + 20);
+      doc.text('AE-CRAFTER ENGINE', boxX + 5, boxY + 20);
       doc.setFontSize(8);
       doc.text('VIRTUAL ARCHITECTURAL AI SYSTEM', boxX + 5, boxY + 28);
 

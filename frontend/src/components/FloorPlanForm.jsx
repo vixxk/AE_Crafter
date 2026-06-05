@@ -90,7 +90,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
           </div>
           <div>
             <h2 style={{ fontSize: '1.2rem', fontWeight: '900', color: 'var(--text-color)', letterSpacing: '-0.8px', textTransform: 'uppercase' }}>AE-Crafter</h2>
-            <span style={{ fontSize: '0.65rem', color: 'var(--primary-color)', fontWeight: '800', letterSpacing: '1px' }}>V2.0 ARCHITECTURAL ENGINE</span>
+            <span style={{ fontSize: '0.65rem', color: 'var(--primary-color)', fontWeight: '800', letterSpacing: '1px' }}>ARCHITECTURAL ENGINE</span>
           </div>
         </div>
       </div>
