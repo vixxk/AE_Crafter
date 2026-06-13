@@ -18,7 +18,7 @@ import ThreeDSkeleton from './ThreeDSkeleton';
 const FEET_TO_UNITS = 20;
 
 const Wall = ({ position, rotation, args, color, isDark = true }) => {
-  const wallColor = color || (isDark ? "#2a332e" : "#cbd5e1");
+  const wallColor = color || (isDark ? "#2a2026" : "#cbd5e1");
   const baseboardColor = isDark ? "#181820" : "#ffffff";
   return (
     <group position={position} rotation={rotation}>

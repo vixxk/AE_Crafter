@@ -80,7 +80,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
         <div
           style={{
             flex: 1,
-            border: '1.5px dashed rgba(16, 185, 129, 0.25)',
+            border: '1.5px dashed rgba(244, 114, 182, 0.3)',
             borderRadius: '12px',
             padding: '16px',
             display: 'grid',
@@ -94,7 +94,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           <div
             className="skeleton-shimmer"
             style={{
-              border: '1.5px solid rgba(16, 185, 129, 0.3)',
+              border: '1.5px solid rgba(244, 114, 182, 0.35)',
               borderRadius: '10px',
               padding: '14px',
               display: 'flex',
@@ -105,7 +105,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ width: '90px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.2)' }} />
+              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(244, 114, 182, 0.25)' }} />
             </div>
             {/* Door swing indicator sketch */}
             <div style={{ width: '24px', height: '24px', borderRight: '1.5px solid var(--border-color)', borderBottom: '1.5px solid var(--border-color)', borderRadius: '0 0 24px 0', alignSelf: 'flex-start' }} />
@@ -115,7 +115,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           <div
             className="skeleton-shimmer"
             style={{
-              border: '1.5px solid rgba(16, 185, 129, 0.3)',
+              border: '1.5px solid rgba(244, 114, 182, 0.35)',
               borderRadius: '10px',
               padding: '14px',
               display: 'flex',
@@ -125,7 +125,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ width: '80px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.2)' }} />
+              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(244, 114, 182, 0.25)' }} />
             </div>
             {/* Window sketch */}
             <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: 'var(--border-color)', alignSelf: 'center' }} />
@@ -135,7 +135,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           <div
             className="skeleton-shimmer"
             style={{
-              border: '1.5px solid rgba(16, 185, 129, 0.3)',
+              border: '1.5px solid rgba(244, 114, 182, 0.35)',
               borderRadius: '10px',
               padding: '14px',
               display: 'flex',
@@ -145,7 +145,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ width: '65px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-              <div style={{ width: '40px', height: '10px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.2)' }} />
+              <div style={{ width: '40px', height: '10px', borderRadius: '4px', background: 'rgba(244, 114, 182, 0.25)' }} />
             </div>
             {/* Counter slab sketch */}
             <div style={{ width: '30px', height: '12px', border: '1px dashed var(--border-color)', borderRadius: '3px' }} />
@@ -155,7 +155,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           <div
             className="skeleton-shimmer"
             style={{
-              border: '1.5px solid rgba(16, 185, 129, 0.3)',
+              border: '1.5px solid rgba(244, 114, 182, 0.35)',
               borderRadius: '10px',
               padding: '14px',
               display: 'flex',
@@ -165,7 +165,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ width: '75px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.2)' }} />
+              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(244, 114, 182, 0.25)' }} />
             </div>
             <div style={{ width: '24px', height: '24px', borderLeft: '1.5px solid var(--border-color)', borderBottom: '1.5px solid var(--border-color)', borderRadius: '0 0 0 24px', alignSelf: 'flex-end' }} />
           </div>
@@ -187,7 +187,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
               gap: '6px',
             }}
           >
-            <div style={{ width: '40px', height: '8px', borderRadius: '3px', background: 'rgba(16, 185, 129, 0.3)' }} />
+            <div style={{ width: '40px', height: '8px', borderRadius: '3px', background: 'rgba(244, 114, 182, 0.4)' }} />
             <div style={{ width: '70px', height: '6px', borderRadius: '2px', background: 'rgba(255, 255, 255, 0.08)' }} />
             <div style={{ width: '60px', height: '6px', borderRadius: '2px', background: 'rgba(255, 255, 255, 0.08)' }} />
           </div>

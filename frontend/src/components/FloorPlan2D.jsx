@@ -14,10 +14,10 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   if (!layout || !layout.rooms) return null;
 
   const isDark = theme !== 'light';
-  const WALL_COLOR = isDark ? '#10b981' : '#059669';
+  const WALL_COLOR = isDark ? '#f472b6' : '#059669';
   const SHEET_BG = isDark ? '#111116' : '#ffffff';
-  const SHEET_BORDER = isDark ? '#262630' : '#e4e4e7';
-  const SETBACK_COLOR = isDark ? '#3f3f46' : '#cbd5e1';
+  const SHEET_BORDER = isDark ? 'rgba(244, 114, 182, 0.25)' : '#e4e4e7';
+  const SETBACK_COLOR = isDark ? 'rgba(244, 114, 182, 0.45)' : '#cbd5e1';
   const CUTOUT_FILL = SHEET_BG;
 
   const { plot, rooms, components = [], entry } = layout;
@@ -622,12 +622,12 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
           position: 'absolute',
           top: '20px',
           right: '20px',
-          background: isDark ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.96)',
-          border: `1.5px solid ${isDark ? '#ffffff' : '#000000'}`,
+          background: isDark ? 'rgba(17, 17, 22, 0.92)' : 'rgba(255, 255, 255, 0.96)',
+          border: `1.5px solid ${isDark ? 'rgba(244, 114, 182, 0.4)' : '#000000'}`,
           borderRadius: '12px',
           padding: isLegendOpen ? '14px 18px' : '10px 16px',
           boxShadow: isDark
-            ? '0 12px 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+            ? '0 12px 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(244, 114, 182, 0.15)'
             : '0 10px 25px rgba(0, 0, 0, 0.12)',
           backdropFilter: 'blur(12px)',
           zIndex: 40,
@@ -650,13 +650,13 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Layers size={16} color={isDark ? '#ffffff' : '#000000'} />
+            <Layers size={16} color={isDark ? '#f472b6' : '#000000'} />
             <span
               style={{
                 fontSize: '0.8rem',
                 fontWeight: '900',
                 letterSpacing: '0.8px',
-                color: isDark ? '#ffffff' : '#000000',
+                color: isDark ? '#f472b6' : '#000000',
                 textTransform: 'uppercase',
                 fontFamily: FONT_FAMILY,
               }}
@@ -670,7 +670,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: isDark ? '#ffffff' : '#000000',
+              color: isDark ? '#f472b6' : '#000000',
               display: 'flex',
               padding: 0,
             }}
@@ -686,7 +686,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
               flexDirection: 'column',
               gap: '9px',
               marginTop: '12px',
-              borderTop: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)'}`,
+              borderTop: `1px solid ${isDark ? 'rgba(244, 114, 182, 0.25)' : 'rgba(0, 0, 0, 0.15)'}`,
               paddingTop: '10px',
             }}
           >
@@ -697,8 +697,8 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     width: '18px',
                     height: '18px',
                     borderRadius: '3px',
-                    background: isDark ? '#ffffff' : '#000000',
-                    color: isDark ? '#000000' : '#ffffff',
+                    background: isDark ? '#f472b6' : '#000000',
+                    color: isDark ? '#111116' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -721,8 +721,8 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     width: '18px',
                     height: '18px',
                     borderRadius: '3px',
-                    background: isDark ? '#ffffff' : '#000000',
-                    color: isDark ? '#000000' : '#ffffff',
+                    background: isDark ? '#f472b6' : '#000000',
+                    color: isDark ? '#111116' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -745,8 +745,8 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     width: '18px',
                     height: '18px',
                     borderRadius: '3px',
-                    background: isDark ? '#ffffff' : '#000000',
-                    color: isDark ? '#000000' : '#ffffff',
+                    background: isDark ? '#f472b6' : '#000000',
+                    color: isDark ? '#111116' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -769,8 +769,8 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     width: '18px',
                     height: '18px',
                     borderRadius: '3px',
-                    background: isDark ? '#ffffff' : '#000000',
-                    color: isDark ? '#000000' : '#ffffff',
+                    background: isDark ? '#f472b6' : '#000000',
+                    color: isDark ? '#111116' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -792,7 +792,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                   style={{
                     width: '12px',
                     height: '12px',
-                    background: isDark ? '#ffffff' : '#000000',
+                    background: isDark ? '#f472b6' : '#000000',
                     borderRadius: '2px',
                     marginLeft: '3px',
                   }}
@@ -808,7 +808,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                   style={{
                     width: '16px',
                     height: '2px',
-                    borderTop: `2px dashed ${isDark ? '#ffffff' : '#000000'}`,
+                    borderTop: `2px dashed ${isDark ? '#f472b6' : '#000000'}`,
                     marginLeft: '1px',
                   }}
                 />
