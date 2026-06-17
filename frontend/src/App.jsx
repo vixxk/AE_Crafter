@@ -311,7 +311,7 @@ function App() {
 
           {!error && isInitialLoading && (
             view === '2D' ? (
-              <HomeSkeleton mode={mode} />
+              <HomeSkeleton mode={mode} theme={theme} />
             ) : (
               <ThreeDSkeleton mode={mode} />
             )
@@ -329,7 +329,7 @@ function App() {
               {loading && (
                 <div style={{ position: 'absolute', inset: 0, zIndex: 100 }}>
                   {view === '2D' ? (
-                    <HomeSkeleton mode={mode} isRebuilding={true} />
+                    <HomeSkeleton mode={mode} isRebuilding={true} theme={theme} />
                   ) : (
                     <ThreeDSkeleton mode={mode} />
                   )}

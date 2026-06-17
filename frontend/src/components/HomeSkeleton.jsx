@@ -1,7 +1,12 @@
 import React from 'react';
 import { Compass, Layers, Sparkles } from 'lucide-react';
 
-const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
+const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' }) => {
+  const isDark = theme !== 'light';
+  const pinkAccent = isDark ? 'rgba(244, 114, 182, 0.35)' : 'rgba(219, 39, 119, 0.35)';
+  const pinkAccentSubtle = isDark ? 'rgba(244, 114, 182, 0.25)' : 'rgba(219, 39, 119, 0.2)';
+  const pinkDashed = isDark ? 'rgba(244, 114, 182, 0.3)' : 'rgba(219, 39, 119, 0.25)';
+  const textBarBg = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.07)';
   return (
     <div
       style={{
@@ -80,7 +85,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
         <div
           style={{
             flex: 1,
-            border: '1.5px dashed rgba(244, 114, 182, 0.3)',
+            border: `1.5px dashed ${pinkDashed}`,
             borderRadius: '12px',
             padding: '16px',
             display: 'grid',
@@ -94,7 +99,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           <div
             className="skeleton-shimmer"
             style={{
-              border: '1.5px solid rgba(244, 114, 182, 0.35)',
+              border: `1.5px solid ${pinkAccent}`,
               borderRadius: '10px',
               padding: '14px',
               display: 'flex',
@@ -104,8 +109,8 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ width: '90px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(244, 114, 182, 0.25)' }} />
+              <div style={{ width: '90px', height: '12px', borderRadius: '4px', background: textBarBg }} />
+              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: pinkAccentSubtle }} />
             </div>
             {/* Door swing indicator sketch */}
             <div style={{ width: '24px', height: '24px', borderRight: '1.5px solid var(--border-color)', borderBottom: '1.5px solid var(--border-color)', borderRadius: '0 0 24px 0', alignSelf: 'flex-start' }} />
@@ -115,7 +120,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           <div
             className="skeleton-shimmer"
             style={{
-              border: '1.5px solid rgba(244, 114, 182, 0.35)',
+              border: `1.5px solid ${pinkAccent}`,
               borderRadius: '10px',
               padding: '14px',
               display: 'flex',
@@ -124,8 +129,8 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ width: '80px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(244, 114, 182, 0.25)' }} />
+              <div style={{ width: '80px', height: '12px', borderRadius: '4px', background: textBarBg }} />
+              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: pinkAccentSubtle }} />
             </div>
             {/* Window sketch */}
             <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: 'var(--border-color)', alignSelf: 'center' }} />
@@ -135,7 +140,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           <div
             className="skeleton-shimmer"
             style={{
-              border: '1.5px solid rgba(244, 114, 182, 0.35)',
+              border: `1.5px solid ${pinkAccent}`,
               borderRadius: '10px',
               padding: '14px',
               display: 'flex',
@@ -144,8 +149,8 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ width: '65px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-              <div style={{ width: '40px', height: '10px', borderRadius: '4px', background: 'rgba(244, 114, 182, 0.25)' }} />
+              <div style={{ width: '65px', height: '12px', borderRadius: '4px', background: textBarBg }} />
+              <div style={{ width: '40px', height: '10px', borderRadius: '4px', background: pinkAccentSubtle }} />
             </div>
             {/* Counter slab sketch */}
             <div style={{ width: '30px', height: '12px', border: '1px dashed var(--border-color)', borderRadius: '3px' }} />
@@ -155,7 +160,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
           <div
             className="skeleton-shimmer"
             style={{
-              border: '1.5px solid rgba(244, 114, 182, 0.35)',
+              border: `1.5px solid ${pinkAccent}`,
               borderRadius: '10px',
               padding: '14px',
               display: 'flex',
@@ -164,8 +169,8 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ width: '75px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: 'rgba(244, 114, 182, 0.25)' }} />
+              <div style={{ width: '75px', height: '12px', borderRadius: '4px', background: textBarBg }} />
+              <div style={{ width: '45px', height: '10px', borderRadius: '4px', background: pinkAccentSubtle }} />
             </div>
             <div style={{ width: '24px', height: '24px', borderLeft: '1.5px solid var(--border-color)', borderBottom: '1.5px solid var(--border-color)', borderRadius: '0 0 0 24px', alignSelf: 'flex-end' }} />
           </div>
@@ -187,9 +192,9 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false }) => {
               gap: '6px',
             }}
           >
-            <div style={{ width: '40px', height: '8px', borderRadius: '3px', background: 'rgba(244, 114, 182, 0.4)' }} />
-            <div style={{ width: '70px', height: '6px', borderRadius: '2px', background: 'rgba(255, 255, 255, 0.08)' }} />
-            <div style={{ width: '60px', height: '6px', borderRadius: '2px', background: 'rgba(255, 255, 255, 0.08)' }} />
+            <div style={{ width: '40px', height: '8px', borderRadius: '3px', background: pinkAccent }} />
+            <div style={{ width: '70px', height: '6px', borderRadius: '2px', background: textBarBg }} />
+            <div style={{ width: '60px', height: '6px', borderRadius: '2px', background: textBarBg }} />
           </div>
 
           {/* Compass Skeleton */}

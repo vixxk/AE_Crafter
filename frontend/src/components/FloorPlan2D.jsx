@@ -14,10 +14,10 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   if (!layout || !layout.rooms) return null;
 
   const isDark = theme !== 'light';
-  const WALL_COLOR = isDark ? '#f472b6' : '#059669';
+  const WALL_COLOR = isDark ? '#f472b6' : '#db2777';
   const SHEET_BG = isDark ? '#111116' : '#ffffff';
-  const SHEET_BORDER = isDark ? 'rgba(244, 114, 182, 0.25)' : '#e4e4e7';
-  const SETBACK_COLOR = isDark ? 'rgba(244, 114, 182, 0.45)' : '#cbd5e1';
+  const SHEET_BORDER = isDark ? 'rgba(244, 114, 182, 0.25)' : 'rgba(219, 39, 119, 0.25)';
+  const SETBACK_COLOR = isDark ? 'rgba(244, 114, 182, 0.45)' : 'rgba(219, 39, 119, 0.35)';
   const CUTOUT_FILL = SHEET_BG;
 
   const { plot, rooms, components = [], entry } = layout;
@@ -508,7 +508,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                   height={roomH}
                   stroke={WALL_COLOR}
                   strokeWidth={WALL_THICKNESS}
-                  fill={room.type === 'corridor' ? (isDark ? '#1a1a22' : '#fffbfc') : room.type === 'parking' ? (isDark ? '#15151c' : '#fef9fa') : 'transparent'}
+                  fill={room.type === 'corridor' ? (isDark ? '#1a1a22' : '#fdf2f8') : room.type === 'parking' ? (isDark ? '#15151c' : '#fce7f3') : 'transparent'}
                 />
 
                 {/* Kitchen slab detail */}
@@ -623,19 +623,19 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
           top: '20px',
           right: '20px',
           background: isDark ? 'rgba(17, 17, 22, 0.92)' : 'rgba(255, 255, 255, 0.96)',
-          border: `1.5px solid ${isDark ? 'rgba(244, 114, 182, 0.4)' : '#000000'}`,
+          border: `1.5px solid ${isDark ? 'rgba(244, 114, 182, 0.4)' : 'rgba(219, 39, 119, 0.35)'}`,
           borderRadius: '12px',
           padding: isLegendOpen ? '14px 18px' : '10px 16px',
           boxShadow: isDark
             ? '0 12px 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(244, 114, 182, 0.15)'
-            : '0 10px 25px rgba(0, 0, 0, 0.12)',
+            : '0 10px 25px rgba(219, 39, 119, 0.08), 0 0 0 1px rgba(219, 39, 119, 0.12)',
           backdropFilter: 'blur(12px)',
           zIndex: 40,
           minWidth: '220px',
           maxWidth: '260px',
           transition: 'all 0.25s ease',
           pointerEvents: 'auto',
-          color: isDark ? '#ffffff' : '#000000',
+          color: isDark ? '#ffffff' : '#18181b',
         }}
       >
         <div
@@ -650,13 +650,13 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Layers size={16} color={isDark ? '#f472b6' : '#000000'} />
+            <Layers size={16} color={isDark ? '#f472b6' : '#db2777'} />
             <span
               style={{
                 fontSize: '0.8rem',
                 fontWeight: '900',
                 letterSpacing: '0.8px',
-                color: isDark ? '#f472b6' : '#000000',
+                color: isDark ? '#f472b6' : '#db2777',
                 textTransform: 'uppercase',
                 fontFamily: FONT_FAMILY,
               }}
@@ -670,7 +670,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: isDark ? '#f472b6' : '#000000',
+              color: isDark ? '#f472b6' : '#db2777',
               display: 'flex',
               padding: 0,
             }}
@@ -686,7 +686,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
               flexDirection: 'column',
               gap: '9px',
               marginTop: '12px',
-              borderTop: `1px solid ${isDark ? 'rgba(244, 114, 182, 0.25)' : 'rgba(0, 0, 0, 0.15)'}`,
+              borderTop: `1px solid ${isDark ? 'rgba(244, 114, 182, 0.25)' : 'rgba(219, 39, 119, 0.2)'}`,
               paddingTop: '10px',
             }}
           >
@@ -697,7 +697,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     width: '18px',
                     height: '18px',
                     borderRadius: '3px',
-                    background: isDark ? '#f472b6' : '#000000',
+                    background: isDark ? '#f472b6' : '#db2777',
                     color: isDark ? '#111116' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
@@ -709,7 +709,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 >
                   D
                 </span>
-                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Door (D)</span>
+                <span style={{ color: isDark ? '#ffffff' : '#18181b', fontWeight: '700' }}>Door (D)</span>
               </div>
               <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>7' × 3'</span>
             </div>
@@ -721,7 +721,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     width: '18px',
                     height: '18px',
                     borderRadius: '3px',
-                    background: isDark ? '#f472b6' : '#000000',
+                    background: isDark ? '#f472b6' : '#db2777',
                     color: isDark ? '#111116' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
@@ -733,7 +733,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 >
                   D1
                 </span>
-                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Main Door (D1)</span>
+                <span style={{ color: isDark ? '#ffffff' : '#18181b', fontWeight: '700' }}>Main Door (D1)</span>
               </div>
               <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>7' × 4.5'</span>
             </div>
@@ -745,7 +745,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     width: '18px',
                     height: '18px',
                     borderRadius: '3px',
-                    background: isDark ? '#f472b6' : '#000000',
+                    background: isDark ? '#f472b6' : '#db2777',
                     color: isDark ? '#111116' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
@@ -757,7 +757,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 >
                   W
                 </span>
-                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Window (W)</span>
+                <span style={{ color: isDark ? '#ffffff' : '#18181b', fontWeight: '700' }}>Window (W)</span>
               </div>
               <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>4' × 3.2'</span>
             </div>
@@ -769,7 +769,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     width: '18px',
                     height: '18px',
                     borderRadius: '3px',
-                    background: isDark ? '#f472b6' : '#000000',
+                    background: isDark ? '#f472b6' : '#db2777',
                     color: isDark ? '#111116' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
@@ -781,7 +781,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 >
                   V
                 </span>
-                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Vent (V)</span>
+                <span style={{ color: isDark ? '#ffffff' : '#18181b', fontWeight: '700' }}>Vent (V)</span>
               </div>
               <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>2' × 2'</span>
             </div>
@@ -792,12 +792,12 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                   style={{
                     width: '12px',
                     height: '12px',
-                    background: isDark ? '#f472b6' : '#000000',
+                    background: isDark ? '#f472b6' : '#db2777',
                     borderRadius: '2px',
                     marginLeft: '3px',
                   }}
                 />
-                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700', marginLeft: '3px' }}>Column Pillar</span>
+                <span style={{ color: isDark ? '#ffffff' : '#18181b', fontWeight: '700', marginLeft: '3px' }}>Column Pillar</span>
               </div>
               <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>10" × 10"</span>
             </div>
@@ -808,11 +808,11 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                   style={{
                     width: '16px',
                     height: '2px',
-                    borderTop: `2px dashed ${isDark ? '#f472b6' : '#000000'}`,
+                    borderTop: `2px dashed ${isDark ? '#f472b6' : '#db2777'}`,
                     marginLeft: '1px',
                   }}
                 />
-                <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700', marginLeft: '1px' }}>Setback Line</span>
+                <span style={{ color: isDark ? '#ffffff' : '#18181b', fontWeight: '700', marginLeft: '1px' }}>Setback Line</span>
               </div>
               <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>Boundary</span>
             </div>
