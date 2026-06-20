@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Rect, Text, Group, Line, Arc, Arrow } from 'react-konva';
 import { Layers, ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -11,6 +11,32 @@ const FONT_FAMILY = 'Outfit, Arial, sans-serif';
 
 const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   const [isLegendOpen, setIsLegendOpen] = useState(true);
+  const containerRef = useRef(null);
+  const [stageDimensions, setStageDimensions] = useState(() => ({
+    width: typeof window !== 'undefined' ? Math.max(window.innerWidth - 440, 500) : 800,
+    height: typeof window !== 'undefined' ? Math.max(window.innerHeight - 120, 500) : 600,
+  }));
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateSize = () => {
+      if (containerRef.current) {
+        const { clientWidth, clientHeight } = containerRef.current;
+        if (clientWidth > 0 && clientHeight > 0) {
+          setStageDimensions({ width: clientWidth, height: clientHeight });
+        }
+      }
+    };
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(containerRef.current);
+    window.addEventListener('resize', updateSize);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateSize);
+    };
+  }, []);
+
   if (!layout || !layout.rooms) return null;
 
   const isDark = theme !== 'light';
@@ -23,20 +49,23 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   const { plot, rooms, components = [], entry } = layout;
   const setbacks = plot.setbacks || { top: 0, bottom: 0, left: 0, right: 0 };
 
-  const stageWidth = window.innerWidth - 450;
-  const stageHeight = window.innerHeight - 150;
+  const stageWidth = stageDimensions.width;
+  const stageHeight = stageDimensions.height;
   const plotPxWidth = plot.width * FEET_TO_PX;
   const plotPxHeight = plot.height * FEET_TO_PX;
 
-  // Auto-scale to fit
-  const padding = 200;
+  // Auto-scale to fit comfortably inside the container with margins for dimension lines
+  const paddingX = 220;
+  const paddingY = 220;
   const scale = Math.min(
-    stageWidth / (plotPxWidth + padding),
-    stageHeight / (plotPxHeight + padding),
-    1.2
+    stageWidth / (plotPxWidth + paddingX),
+    stageHeight / (plotPxHeight + paddingY),
+    1.15
   );
-  const offsetX = 120;
-  const offsetY = 100;
+
+  // Center exactly in the middle of the right side container box
+  const offsetX = (stageWidth / scale - plotPxWidth) / 2;
+  const offsetY = (stageHeight / scale - plotPxHeight) / 2;
 
   // ─── Compute building envelope ────────────────────────────────────
   const buildEnvelope = useMemo(() => {
@@ -400,8 +429,21 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   const envPxH = buildEnvelope.height * FEET_TO_PX;
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--canvas-bg)', overflow: 'hidden' }}>
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'var(--canvas-bg)',
+        overflow: 'hidden',
+      }}
+    >
       <Stage
+        key={`stage-${layout.id || ''}-${plot.width}x${plot.height}`}
         width={stageWidth}
         height={stageHeight}
         scaleX={scale}
