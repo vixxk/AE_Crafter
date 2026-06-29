@@ -319,12 +319,11 @@ function App() {
 
           {!error && !isInitialLoading && layout && (
             <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-              <div style={{ display: view === '2D' ? 'block' : 'none', width: '100%', height: '100%' }}>
+              {view === '2D' ? (
                 <FloorPlan2D layout={layout} onRoomUpdate={handleUpdateRoom} theme={theme} />
-              </div>
-              <div style={{ display: view === '3D' ? 'block' : 'none', width: '100%', height: '100%' }}>
+              ) : (
                 <FloorPlan3D layout={layout} theme={theme} />
-              </div>
+              )}
 
               {loading && (
                 <div style={{ position: 'absolute', inset: 0, zIndex: 100 }}>
