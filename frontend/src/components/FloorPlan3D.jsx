@@ -217,33 +217,33 @@ const Room3D = ({ room, isDark = true }) => {
       </mesh>
 
       {/* Modern Glassmorphic Room Info Badge */}
-      <Html position={[0, wh + 8, 0]} center distanceFactor={240}>
+      <Html position={[0, wh + 12, 0]} center distanceFactor={600}>
         <div style={{
-          background: isDark ? 'rgba(17, 17, 22, 0.92)' : 'rgba(255, 255, 255, 0.94)',
-          backdropFilter: 'blur(8px)',
-          border: `1.5px solid ${isDark ? 'rgba(244, 114, 182, 0.45)' : 'rgba(219, 39, 119, 0.35)'}`,
-          padding: '4px 10px',
-          borderRadius: '14px',
+          background: isDark ? 'rgba(17, 17, 22, 0.94)' : 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(10px)',
+          border: `1.8px solid ${isDark ? 'rgba(244, 114, 182, 0.55)' : 'rgba(219, 39, 119, 0.45)'}`,
+          padding: '6px 14px',
+          borderRadius: '16px',
           color: isDark ? '#ffffff' : '#18181b',
-          fontSize: '10.5px',
+          fontSize: '14px',
           fontWeight: '800',
           whiteSpace: 'nowrap',
           pointerEvents: 'none',
           userSelect: 'none',
           boxShadow: isDark
-            ? '0 6px 18px rgba(0, 0, 0, 0.6), 0 0 10px rgba(244, 114, 182, 0.15)'
-            : '0 4px 14px rgba(0, 0, 0, 0.08)',
+            ? '0 8px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(244, 114, 182, 0.25)'
+            : '0 6px 18px rgba(0, 0, 0, 0.12)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '1px',
+          gap: '2px',
           fontFamily: 'Outfit, Arial, sans-serif'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: color }} />
-            <span>{type.replace(/_/g, ' ').toUpperCase()}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}` }} />
+            <span style={{ letterSpacing: '0.6px' }}>{type.replace(/_/g, ' ').toUpperCase()}</span>
           </div>
-          <span style={{ fontSize: '9px', fontWeight: '600', opacity: 0.65 }}>
+          <span style={{ fontSize: '11px', fontWeight: '600', opacity: 0.75 }}>
             {`${width}' × ${height}'`}
           </span>
         </div>

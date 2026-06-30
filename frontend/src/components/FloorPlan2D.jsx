@@ -383,14 +383,14 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
           {/* Label */}
           <Text
             text={label}
-            x={(x1 + x2) / 2 - 20}
-            y={y1 + textY}
-            fontSize={24}
+            x={(x1 + x2) / 2 - 25}
+            y={y1 + textY - 2}
+            fontSize={28}
             fontStyle="bold"
             fill={WALL_COLOR}
             fontFamily={FONT_FAMILY}
             align="center"
-            width={40}
+            width={50}
           />
         </Group>
       );
@@ -399,7 +399,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
     // Vertical dimension
     const dx = outside === 'left' ? -offset : offset;
     const tickDir = outside === 'left' ? -1 : 1;
-    const textX = outside === 'left' ? dx - 18 : dx + 8;
+    const textX = outside === 'left' ? dx - 20 : dx + 8;
     return (
       <Group>
         <Line points={[x1 + dx, y1, x2 + dx, y2]} stroke={WALL_COLOR} strokeWidth={1} />
@@ -410,8 +410,8 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
         <Text
           text={label}
           x={x1 + textX}
-          y={(y1 + y2) / 2 + 20}
-          fontSize={24}
+          y={(y1 + y2) / 2 + 25}
+          fontSize={28}
           fontStyle="bold"
           fill={WALL_COLOR}
           fontFamily={FONT_FAMILY}
@@ -540,8 +540,8 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
             const roomH = room.height * FEET_TO_PX;
             const isVertical = room.height >= room.width * 1.5;
             const labelW = isVertical ? roomH : roomW;
-            const fontSizeTitle = Math.max(10, Math.min(14, labelW / 7));
-            const fontSizeDim = Math.max(9, Math.min(12, labelW / 9));
+            const fontSizeTitle = Math.max(14, Math.min(22, labelW / 5.5));
+            const fontSizeDim = Math.max(11, Math.min(16, labelW / 7));
 
             return (
               <Group key={room.id} x={room.x * FEET_TO_PX} y={room.y * FEET_TO_PX}>
@@ -567,17 +567,18 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     fontFamily={FONT_FAMILY}
                     width={labelW - 8}
                     offsetX={(labelW - 8) / 2}
-                    y={-fontSizeTitle - 2}
+                    y={-fontSizeTitle - 3}
                   />
                   <Text
                     text={`${room.width}FT X ${room.height}FT.`}
                     align="center"
                     fontSize={fontSizeDim}
+                    fontStyle="bold"
                     fill={WALL_COLOR}
                     fontFamily={FONT_FAMILY}
                     width={labelW - 8}
                     offsetX={(labelW - 8) / 2}
-                    y={4}
+                    y={5}
                   />
                 </Group>
               </Group>
