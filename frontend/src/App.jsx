@@ -276,7 +276,7 @@ function App() {
 
             {layout && !loading && (
               <button
-                className="btn btn-primary"
+                className={`btn btn-primary ${exporting ? 'is-loading' : ''}`}
                 style={{ width: 'auto', padding: '8px 16px', fontSize: '0.85rem' }}
                 onClick={handleExport}
                 disabled={exporting}
@@ -318,7 +318,7 @@ function App() {
           )}
 
           {!error && !isInitialLoading && layout && (
-            <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+            <div className="canvas-fade-in" style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
               {view === '2D' ? (
                 <FloorPlan2D layout={layout} onRoomUpdate={handleUpdateRoom} theme={theme} />
               ) : (

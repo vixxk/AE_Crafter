@@ -32,6 +32,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' })
           `,
           backgroundSize: '40px 40px',
           pointerEvents: 'none',
+          animation: 'gridDrift 30s linear infinite',
         }}
       />
 
@@ -49,8 +50,21 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' })
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
+          overflow: 'hidden',
         }}
       >
+        {/* Animated Laser Scanning Beam */}
+        <div
+          className="blueprint-scan-laser"
+          style={{
+            background: isDark
+              ? undefined
+              : 'linear-gradient(90deg, transparent 0%, rgba(219, 39, 119, 0.6) 20%, #db2777 50%, rgba(219, 39, 119, 0.6) 80%, transparent 100%)',
+            boxShadow: isDark
+              ? undefined
+              : '0 0 16px rgba(219, 39, 119, 0.7), 0 0 30px rgba(219, 39, 119, 0.35)',
+          }}
+        />
         {/* Top dimension bar placeholder */}
         <div
           style={{
@@ -106,6 +120,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' })
               flexDirection: 'column',
               justifyContent: 'space-between',
               position: 'relative',
+              animationDelay: '0s',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -126,6 +141,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' })
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              animationDelay: '0.2s',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -146,6 +162,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' })
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              animationDelay: '0.4s',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -166,6 +183,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' })
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              animationDelay: '0.6s',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -263,13 +281,20 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' })
           />
         </span>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-color)' }}>
-            {mode === 'ai'
-              ? 'AI Engine Synthesizing Layout...'
-              : isRebuilding
-              ? 'Rebuilding 2D Floor Plan...'
-              : 'Generating Architectural Layout...'}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-color)' }}>
+              {mode === 'ai'
+                ? 'AI Engine Synthesizing Layout'
+                : isRebuilding
+                ? 'Rebuilding 2D Floor Plan'
+                : 'Generating Architectural Layout'}
+            </span>
+            <span style={{ display: 'inline-flex', gap: '3px', color: 'var(--primary-color)' }}>
+              <span className="loading-dot" />
+              <span className="loading-dot" />
+              <span className="loading-dot" />
+            </span>
+          </div>
           <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
             {mode === 'ai'
               ? 'Parsing prompt requirements, space sizing & circulation paths'

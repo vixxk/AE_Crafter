@@ -233,12 +233,13 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         padding: '12px 14px',
-                        opacity: 0.85
+                        opacity: 0.85,
+                        animationDelay: `${(i - 1) * 0.15}s`,
                       }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         <div style={{ width: '90px', height: '12px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)' }} />
-                        <div style={{ width: '50px', height: '9px', borderRadius: '3px', background: 'rgba(16, 185, 129, 0.2)' }} />
+                        <div style={{ width: '50px', height: '9px', borderRadius: '3px', background: 'rgba(244, 114, 182, 0.25)' }} />
                       </div>
                       <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.04)' }} />
                     </div>
@@ -319,19 +320,23 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
 
       <div className="sidebar-footer">
         {mode === 'manual' ? (
-          <button className="btn btn-primary" onClick={handleSubmit}>
-            <RefreshCw size={18} /> Rebuild Layout
+          <button
+            className={`btn btn-primary ${isGenerating ? 'is-loading' : ''}`}
+            onClick={handleSubmit}
+            disabled={isGenerating}
+          >
+            <RefreshCw size={18} className={isGenerating ? 'spin' : ''} />
+            {isGenerating ? 'Rebuilding Layout...' : 'Rebuild Layout'}
           </button>
         ) : (
           <button
-            className="btn btn-primary"
+            className={`btn btn-primary ${isGenerating ? 'is-loading' : ''}`}
             onClick={handleAIGenerate}
             disabled={isGenerating}
-            style={{ position: 'relative', overflow: 'hidden' }}
           >
             {isGenerating ? (
               <>
-                <RefreshCw size={18} className="animate-spin" /> Thinking...
+                <RefreshCw size={18} className="spin" /> Synthesizing Layout...
               </>
             ) : (
               <>

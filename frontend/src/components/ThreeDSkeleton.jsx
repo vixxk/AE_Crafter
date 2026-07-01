@@ -137,10 +137,40 @@ const ThreeDSkeleton = ({ mode = 'manual', isSuspense = false }) => {
             />
           </g>
 
-          {/* Structural Vertical Guides */}
-          <line x1="160" y1="20" x2="160" y2="190" stroke="rgba(16, 185, 129, 0.3)" strokeDasharray="4 4" strokeWidth="1" />
-          <line x1="100" y1="55" x2="100" y2="165" stroke="rgba(16, 185, 129, 0.2)" strokeDasharray="4 4" strokeWidth="1" />
-          <line x1="220" y1="55" x2="220" y2="165" stroke="rgba(16, 185, 129, 0.2)" strokeDasharray="4 4" strokeWidth="1" />
+          {/* Structural Vertical Guides with Marching Dash Animation */}
+          <line
+            x1="160"
+            y1="20"
+            x2="160"
+            y2="190"
+            stroke="var(--primary-color)"
+            strokeDasharray="4 4"
+            strokeWidth="1.2"
+            strokeOpacity="0.5"
+            style={{ animation: 'dashMarch 1.2s linear infinite' }}
+          />
+          <line
+            x1="100"
+            y1="55"
+            x2="100"
+            y2="165"
+            stroke="var(--primary-color)"
+            strokeDasharray="4 4"
+            strokeWidth="1"
+            strokeOpacity="0.35"
+            style={{ animation: 'dashMarch 1.5s linear infinite' }}
+          />
+          <line
+            x1="220"
+            y1="55"
+            x2="220"
+            y2="165"
+            stroke="var(--primary-color)"
+            strokeDasharray="4 4"
+            strokeWidth="1"
+            strokeOpacity="0.35"
+            style={{ animation: 'dashMarch 1.5s linear infinite' }}
+          />
         </svg>
       </div>
 
@@ -192,11 +222,22 @@ const ThreeDSkeleton = ({ mode = 'manual', isSuspense = false }) => {
           />
         </span>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-color)' }}>
-            {mode === 'ai' ? 'Synthesizing 3D Architectural Model...' : 'Rendering 3D Spatial Geometry...'}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-color)' }}>
+              {isSuspense
+                ? 'Mounting 3D Scene'
+                : mode === 'ai'
+                ? 'Synthesizing 3D Architectural Model'
+                : 'Constructing 3D Geometry'}
+            </span>
+            <span style={{ display: 'inline-flex', gap: '3px', color: 'var(--primary-color)' }}>
+              <span className="loading-dot" />
+              <span className="loading-dot" />
+              <span className="loading-dot" />
+            </span>
+          </div>
           <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-            Extruding wall heights, structural elements & shadows
+            Generating wall extrusions, spatial lighting & room volumes
           </span>
         </div>
       </div>
