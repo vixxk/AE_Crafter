@@ -210,7 +210,7 @@ const HomeSkeleton = ({ mode = 'manual', isRebuilding = false, theme = 'dark' })
               gap: '6px',
             }}
           >
-            <div style={{ width: '40px', height: '8px', borderRadius: '3px', background: pinkAccent }} />
+            <div style={{ width: '40px', height: '8px', borderRadius: '3px', background: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)' }} />
             <div style={{ width: '70px', height: '6px', borderRadius: '2px', background: textBarBg }} />
             <div style={{ width: '60px', height: '6px', borderRadius: '2px', background: textBarBg }} />
           </div>
