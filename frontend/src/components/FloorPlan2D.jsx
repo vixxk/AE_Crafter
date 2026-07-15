@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Rect, Text, Group, Line, Arc, Arrow } from 'react-konva';
-import { Layers, ChevronDown, ChevronUp } from 'lucide-react';
+import { Layers, ChevronDown, ChevronUp, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 const FEET_TO_PX = 20;
 const WALL_THICKNESS = 2.5;
@@ -11,7 +11,13 @@ const FONT_FAMILY = 'Outfit, Arial, sans-serif';
 
 const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   const [isLegendOpen, setIsLegendOpen] = useState(true);
+  const [zoom, setZoom] = useState(1);
+  const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
+  const [isPositioned, setIsPositioned] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
   const containerRef = useRef(null);
+  const stageRef = useRef(null);
   const [stageDimensions, setStageDimensions] = useState(() => ({
     width: typeof window !== 'undefined' ? Math.max(window.innerWidth - 440, 500) : 800,
     height: typeof window !== 'undefined' ? Math.max(window.innerHeight - 120, 500) : 600,
@@ -57,15 +63,105 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
   // Auto-scale to fit comfortably inside the container with margins for dimension lines
   const paddingX = 220;
   const paddingY = 220;
-  const scale = Math.min(
+  const baseScale = Math.min(
     stageWidth / (plotPxWidth + paddingX),
     stageHeight / (plotPxHeight + paddingY),
     1.15
   );
 
-  // Center exactly in the middle of the right side container box
-  const offsetX = (stageWidth / scale - plotPxWidth) / 2;
-  const offsetY = (stageHeight / scale - plotPxHeight) / 2;
+  const scale = baseScale * zoom;
+
+  // Center position calculation
+  const currentStageX = isPositioned ? stagePos.x : (stageWidth - plotPxWidth * baseScale) / 2;
+  const currentStageY = isPositioned ? stagePos.y : (stageHeight - plotPxHeight * baseScale) / 2;
+
+  // Reset & re-center when layout changes or dimensions update
+  useEffect(() => {
+    if (!layout || !layout.plot) return;
+    const pW = layout.plot.width * FEET_TO_PX;
+    const pH = layout.plot.height * FEET_TO_PX;
+    const bScale = Math.min(
+      stageDimensions.width / (pW + 220),
+      stageDimensions.height / (pH + 220),
+      1.15
+    );
+    setZoom(1);
+    setStagePos({
+      x: (stageDimensions.width - pW * bScale) / 2,
+      y: (stageDimensions.height - pH * bScale) / 2,
+    });
+    setIsPositioned(true);
+  }, [layout.id, layout.plot?.width, layout.plot?.height, stageDimensions.width, stageDimensions.height]);
+
+  const handleZoomChange = (newZoom) => {
+    const clamped = Math.min(Math.max(Number(newZoom.toFixed(3)), 0.3), 3.0);
+    const stage = stageRef.current;
+    const curX = stage ? stage.x() : currentStageX;
+    const curY = stage ? stage.y() : currentStageY;
+
+    const oldScale = baseScale * zoom;
+    const nextScale = baseScale * clamped;
+
+    const viewCenterX = stageWidth / 2;
+    const viewCenterY = stageHeight / 2;
+
+    const virtualCenter = {
+      x: (viewCenterX - curX) / oldScale,
+      y: (viewCenterY - curY) / oldScale,
+    };
+
+    const newPos = {
+      x: viewCenterX - virtualCenter.x * nextScale,
+      y: viewCenterY - virtualCenter.y * nextScale,
+    };
+
+    setZoom(clamped);
+    setStagePos(newPos);
+    setIsPositioned(true);
+  };
+
+  const handleZoomStep = (delta) => {
+    handleZoomChange(zoom + delta);
+  };
+
+  const handleResetZoom = () => {
+    setZoom(1);
+    setStagePos({
+      x: (stageWidth - plotPxWidth * baseScale) / 2,
+      y: (stageHeight - plotPxHeight * baseScale) / 2,
+    });
+    setIsPositioned(true);
+  };
+
+  const handleWheel = (e) => {
+    e.evt.preventDefault();
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const pointer = stage.getPointerPosition();
+    if (!pointer) return;
+
+    const zoomFactor = e.evt.deltaY < 0 ? 1.08 : 0.92;
+    const newZoom = Math.min(Math.max(Number((zoom * zoomFactor).toFixed(3)), 0.3), 3.0);
+    if (newZoom === zoom) return;
+
+    const oldScale = baseScale * zoom;
+    const nextScale = baseScale * newZoom;
+
+    const mousePointTo = {
+      x: (pointer.x - stage.x()) / oldScale,
+      y: (pointer.y - stage.y()) / oldScale,
+    };
+
+    const newPos = {
+      x: pointer.x - mousePointTo.x * nextScale,
+      y: pointer.y - mousePointTo.y * nextScale,
+    };
+
+    setZoom(newZoom);
+    setStagePos(newPos);
+    setIsPositioned(true);
+  };
 
   // ─── Compute building envelope ────────────────────────────────────
   const buildEnvelope = useMemo(() => {
@@ -443,14 +539,28 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
       }}
     >
       <Stage
+        ref={stageRef}
         key={`stage-${layout.id || ''}-${plot.width}x${plot.height}`}
         width={stageWidth}
         height={stageHeight}
+        x={currentStageX}
+        y={currentStageY}
         scaleX={scale}
         scaleY={scale}
         draggable
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={(e) => {
+          setIsDragging(false);
+          setStagePos({
+            x: e.target.x(),
+            y: e.target.y(),
+          });
+          setIsPositioned(true);
+        }}
+        onWheel={handleWheel}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
-        <Layer x={offsetX} y={offsetY}>
+        <Layer>
           {/* ─── Plot Boundary (outer) ─────────────────────────────── */}
           <Rect
             width={plotPxWidth}
@@ -661,6 +771,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
 
       {/* ─── Legend Panel Aside from the diagram (Black & White) ────── */}
       <div
+        data-html2canvas-ignore="true"
         style={{
           position: 'absolute',
           top: '20px',
@@ -861,6 +972,128 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* ─── Zoom Controls Slider (Bottom Right of the Right Box) ───── */}
+      <div
+        data-html2canvas-ignore="true"
+        style={{
+          position: 'absolute',
+          bottom: '20px',
+          right: '20px',
+          background: isDark ? 'rgba(17, 17, 22, 0.94)' : 'rgba(255, 255, 255, 0.98)',
+          border: `1.5px solid ${isDark ? 'rgba(255, 255, 255, 0.22)' : '#000000'}`,
+          borderRadius: '12px',
+          padding: '7px 12px',
+          boxShadow: isDark
+            ? '0 12px 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08)'
+            : '0 8px 24px rgba(0, 0, 0, 0.12)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 40,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          pointerEvents: 'auto',
+          userSelect: 'none',
+        }}
+      >
+        {/* Zoom Out Button */}
+        <button
+          type="button"
+          onClick={() => handleZoomStep(-0.15)}
+          disabled={zoom <= 0.3}
+          title="Zoom Out"
+          className="zoom-icon-btn"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: isDark ? '#ffffff' : '#000000',
+            cursor: zoom <= 0.3 ? 'not-allowed' : 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            opacity: zoom <= 0.3 ? 0.3 : 0.85,
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <ZoomOut size={16} />
+        </button>
+
+        {/* Range Slider */}
+        <input
+          type="range"
+          min="30"
+          max="300"
+          step="5"
+          value={Math.round(zoom * 100)}
+          onChange={(e) => handleZoomChange(Number(e.target.value) / 100)}
+          className="zoom-slider"
+          aria-label="Zoom Level"
+          title={`Zoom: ${Math.round(zoom * 100)}%`}
+          style={{
+            width: '110px',
+            accentColor: isDark ? '#f472b6' : '#db2777',
+            cursor: 'pointer',
+          }}
+        />
+
+        {/* Zoom In Button */}
+        <button
+          type="button"
+          onClick={() => handleZoomStep(0.15)}
+          disabled={zoom >= 3.0}
+          title="Zoom In"
+          className="zoom-icon-btn"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: isDark ? '#ffffff' : '#000000',
+            cursor: zoom >= 3.0 ? 'not-allowed' : 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            opacity: zoom >= 3.0 ? 0.3 : 0.85,
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <ZoomIn size={16} />
+        </button>
+
+        {/* Divider */}
+        <div
+          style={{
+            width: '1px',
+            height: '16px',
+            background: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.18)',
+            margin: '0 2px',
+          }}
+        />
+
+        {/* Reset to Fit (100%) */}
+        <button
+          type="button"
+          onClick={handleResetZoom}
+          title="Reset to Fit (100%)"
+          className="zoom-reset-btn"
+          style={{
+            background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
+            border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'}`,
+            borderRadius: '6px',
+            padding: '3px 8px',
+            color: isDark ? '#ffffff' : '#000000',
+            fontSize: '0.74rem',
+            fontWeight: '700',
+            fontFamily: FONT_FAMILY,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <RotateCcw size={12} />
+          <span>{Math.round(zoom * 100)}%</span>
+        </button>
       </div>
     </div>
   );

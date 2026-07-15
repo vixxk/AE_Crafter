@@ -610,3 +610,58 @@ select option {
     font-size: 0.8rem;
   }
 }
+
+/* ─── Canvas Zoom Slider Widget Styles ─── */
+.zoom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--border-color);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  box-shadow: 0 0 8px rgba(244, 114, 182, 0.4);
+  cursor: pointer;
+  border: 2px solid var(--card-bg);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.zoom-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  box-shadow: 0 0 8px rgba(244, 114, 182, 0.4);
+  cursor: pointer;
+  border: 2px solid var(--card-bg);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.zoom-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.22);
+}
+
+.zoom-slider:hover::-moz-range-thumb {
+  transform: scale(1.22);
+}
+
+.zoom-icon-btn:hover:not(:disabled) {
+  opacity: 1 !important;
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.zoom-reset-btn:hover {
+  filter: brightness(1.2);
+  transform: scale(1.03);
+}
+
