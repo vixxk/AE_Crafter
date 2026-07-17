@@ -11,6 +11,7 @@ import {
   Compass,
   ArrowRight
 } from 'lucide-react';
+import { getUnitConfig } from '../utils/units';
 
 const ROOM_TYPES = [
   'Bedroom',
@@ -25,7 +26,8 @@ const ROOM_TYPES = [
   'Garage'
 ];
 
-const FloorPlanForm = ({ onGenerate, isGenerating }) => {
+const FloorPlanForm = ({ onGenerate, isGenerating, unit = 'feet', onUnitChange }) => {
+  const unitCfg = getUnitConfig(unit);
   const [mode, setMode] = useState('manual');
   const [plot, setPlot] = useState({ width: 42, height: 45 });
   const [setbacks, setSetbacks] = useState({ top: 3, bottom: 3, left: 3, right: 3 });
@@ -73,11 +75,11 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    onGenerate({ plot, rooms, setbacks, orientation, requirements });
+    onGenerate({ plot, rooms, setbacks, orientation, requirements: { ...requirements, units: unit } });
   };
 
   const handleAIGenerate = () => {
-    onGenerate({ plot, prompt: aiPrompt, setbacks, orientation, requirements }, true);
+    onGenerate({ plot, prompt: aiPrompt, setbacks, orientation, requirements: { ...requirements, units: unit } }, true);
   };
 
 
@@ -140,6 +142,47 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
             Site Parameters
           </div>
 
+          <div className="form-group" style={{ marginBottom: '14px' }}>
+            <label>Unit of Measurement</label>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '4px',
+                background: 'var(--input-bg)',
+                padding: '4px',
+                borderRadius: '10px',
+                border: '1px solid var(--border-color)',
+              }}
+            >
+              {[
+                { id: 'feet', label: 'Feet' },
+                { id: 'meters', label: 'Meters' },
+                { id: 'inches', label: 'Inches' },
+                { id: 'yards', label: 'Yards' },
+              ].map((u) => (
+                <button
+                  key={u.id}
+                  type="button"
+                  onClick={() => onUnitChange && onUnitChange(u.id)}
+                  style={{
+                    padding: '6px 2px',
+                    fontSize: '0.72rem',
+                    fontWeight: '700',
+                    borderRadius: '7px',
+                    border: 'none',
+                    background: unit === u.id ? 'var(--primary-color)' : 'transparent',
+                    color: unit === u.id ? '#ffffff' : 'var(--text-muted)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  {u.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="form-group">
             <label>North Orientation</label>
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -153,32 +196,42 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
           </div>
 
           <div className="form-group" style={{ marginBottom: '16px' }}>
-            <label>Plot Area (sq ft)</label>
+            <label>Plot Area ({unitCfg.areaSymbol})</label>
             <input
               type="number"
-              value={plot.width * plot.height}
+              step="any"
+              value={Math.round(unitCfg.toUnit(plot.width) * unitCfg.toUnit(plot.height))}
               onChange={(e) => {
                 const area = Number(e.target.value);
-
                 const w = Math.sqrt(area * 1.25);
                 const h = area / w;
-                setPlot({ width: Math.round(w), height: Math.round(h) });
+                setPlot({ width: unitCfg.fromUnit(w), height: unitCfg.fromUnit(h) });
               }}
             />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div className="form-group">
-              <label>Width (ft)</label>
-              <input type="number" value={plot.width} onChange={(e) => setPlot({ ...plot, width: Number(e.target.value) })} />
+              <label>Width ({unitCfg.symbol})</label>
+              <input
+                type="number"
+                step="any"
+                value={unitCfg.toUnit(plot.width)}
+                onChange={(e) => setPlot({ ...plot, width: unitCfg.fromUnit(Number(e.target.value)) })}
+              />
             </div>
             <div className="form-group">
-              <label>Height (ft)</label>
-              <input type="number" value={plot.height} onChange={(e) => setPlot({ ...plot, height: Number(e.target.value) })} />
+              <label>Height ({unitCfg.symbol})</label>
+              <input
+                type="number"
+                step="any"
+                value={unitCfg.toUnit(plot.height)}
+                onChange={(e) => setPlot({ ...plot, height: unitCfg.fromUnit(Number(e.target.value)) })}
+              />
             </div>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '8px' }}>
-            Total Site Area: {plot.width * plot.height} sq ft
+            Total Site Area: {Math.round(unitCfg.toUnit(plot.width) * unitCfg.toUnit(plot.height))} {unitCfg.areaSymbol}
           </div>
         </section>
 
@@ -202,12 +255,22 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                   <div className="form-group">
-                    <label>Width</label>
-                    <input type="number" value={newRoom.width} onChange={(e) => setNewRoom({ ...newRoom, width: Number(e.target.value) })} />
+                    <label>Width ({unitCfg.symbol})</label>
+                    <input
+                      type="number"
+                      step="any"
+                      value={unitCfg.toUnit(newRoom.width)}
+                      onChange={(e) => setNewRoom({ ...newRoom, width: unitCfg.fromUnit(Number(e.target.value)) })}
+                    />
                   </div>
                   <div className="form-group">
-                    <label>Height</label>
-                    <input type="number" value={newRoom.height} onChange={(e) => setNewRoom({ ...newRoom, height: Number(e.target.value) })} />
+                    <label>Height ({unitCfg.symbol})</label>
+                    <input
+                      type="number"
+                      step="any"
+                      value={unitCfg.toUnit(newRoom.height)}
+                      onChange={(e) => setNewRoom({ ...newRoom, height: unitCfg.fromUnit(Number(e.target.value)) })}
+                    />
                   </div>
                 </div>
 
@@ -250,7 +313,7 @@ const FloorPlanForm = ({ onGenerate, isGenerating }) => {
                   <div key={room.id} className="room-list-item">
                     <div className="room-info">
                       <span className="room-name">{room.type}</span>
-                      <span className="room-details">{room.width} x {room.height} ft</span>
+                      <span className="room-details">{unitCfg.toUnit(room.width)} × {unitCfg.toUnit(room.height)} {unitCfg.symbol}</span>
                     </div>
                     <button className="remove-btn" onClick={() => handleRemoveRoom(room.id)}>
                       <Trash2 size={16} />

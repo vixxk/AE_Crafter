@@ -20,6 +20,7 @@ import HomeSkeleton from './components/HomeSkeleton';
 import ThreeDSkeleton from './components/ThreeDSkeleton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import { getUnitConfig } from './utils/units';
 
 const VITE_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const GENERATE_URL = `${VITE_API_URL}/api/generate`;
@@ -34,6 +35,7 @@ function App() {
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState(null);
   const [mode, setGenerationMode] = useState('manual');
+  const [unit, setUnit] = useState('feet');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -116,11 +118,17 @@ function App() {
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
+      const unitCfg = getUnitConfig(unit);
+      const plotArea = Math.round(unitCfg.toUnit(layout.plot.width) * unitCfg.toUnit(layout.plot.height));
+      const wStr = `${unitCfg.toUnit(layout.plot.width)} ${unitCfg.symbol}`;
+      const hStr = `${unitCfg.toUnit(layout.plot.height)} ${unitCfg.symbol}`;
+
       doc.text([
-        `Area: ${layout.plot.width * layout.plot.height} sq ft`,
-        `Dimensions: ${layout.plot.width}ft x ${layout.plot.height}ft`,
+        `Area: ${plotArea} ${unitCfg.areaSymbol}`,
+        `Dimensions: ${wStr} x ${hStr}`,
         `Orientation: Facing ${layout.plot.orientation}`,
-        `Setbacks: T:${layout.plot.setbacks.top}ft, B:${layout.plot.setbacks.bottom}ft, L:${layout.plot.setbacks.left}ft, R:${layout.plot.setbacks.right}ft`
+        `Unit System: ${unitCfg.name}`,
+        `Setbacks: T:${unitCfg.toUnit(layout.plot.setbacks.top)}${unitCfg.symbol}, B:${unitCfg.toUnit(layout.plot.setbacks.bottom)}${unitCfg.symbol}, L:${unitCfg.toUnit(layout.plot.setbacks.left)}${unitCfg.symbol}, R:${unitCfg.toUnit(layout.plot.setbacks.right)}${unitCfg.symbol}`
       ], 20, 52);
 
 
@@ -221,7 +229,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <FloorPlanForm onGenerate={handleGenerate} isGenerating={loading} />
+      <FloorPlanForm onGenerate={handleGenerate} isGenerating={loading} unit={unit} onUnitChange={setUnit} />
 
 
       <main className="main-content">
@@ -231,9 +239,32 @@ function App() {
               AE-Crafter
             </h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--primary-color)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Grid size={12} /> Unit: Feet
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--primary-color)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Grid size={12} /> Unit:
+                </span>
+                <select
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  aria-label="Unit of Measurement"
+                  style={{
+                    background: 'var(--view-controls-bg)',
+                    color: 'var(--text-color)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '6px',
+                    padding: '2px 8px',
+                    fontSize: '0.74rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    outline: 'none',
+                  }}
+                >
+                  <option value="feet">Feet (ft)</option>
+                  <option value="meters">Meters (m)</option>
+                  <option value="inches">Inches (in)</option>
+                  <option value="yards">Yards (yd)</option>
+                </select>
+              </div>
               <span style={{ fontSize: '12px', color: 'var(--border-color)' }}>|</span>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Database size={12} /> Mode: {mode === 'ai' ? 'AI Enhanced' : 'Standard'}
@@ -320,7 +351,7 @@ function App() {
           {!error && !isInitialLoading && layout && (
             <div className="canvas-fade-in" style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
               {view === '2D' ? (
-                <FloorPlan2D layout={layout} onRoomUpdate={handleUpdateRoom} theme={theme} />
+                <FloorPlan2D layout={layout} onRoomUpdate={handleUpdateRoom} theme={theme} unit={unit} />
               ) : (
                 <FloorPlan3D layout={layout} theme={theme} />
               )}

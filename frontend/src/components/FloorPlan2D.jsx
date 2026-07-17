@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Rect, Text, Group, Line, Arc, Arrow } from 'react-konva';
 import { Layers, ChevronDown, ChevronUp, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { getUnitConfig } from '../utils/units';
 
 const FEET_TO_PX = 20;
 const WALL_THICKNESS = 2.5;
@@ -9,7 +10,8 @@ const DIM_OFFSET = 55;
 const DIM_TICK = 8;
 const FONT_FAMILY = 'Outfit, Arial, sans-serif';
 
-const FloorPlan2D = ({ layout, theme = 'dark' }) => {
+const FloorPlan2D = ({ layout, theme = 'dark', unit = 'feet' }) => {
+  const unitCfg = getUnitConfig(unit);
   const [isLegendOpen, setIsLegendOpen] = useState(true);
   const [zoom, setZoom] = useState(1);
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
@@ -479,14 +481,14 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
           {/* Label */}
           <Text
             text={label}
-            x={(x1 + x2) / 2 - 25}
+            x={(x1 + x2) / 2 - 40}
             y={y1 + textY - 2}
             fontSize={28}
             fontStyle="bold"
             fill={WALL_COLOR}
             fontFamily={FONT_FAMILY}
             align="center"
-            width={50}
+            width={80}
           />
         </Group>
       );
@@ -506,12 +508,14 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
         <Text
           text={label}
           x={x1 + textX}
-          y={(y1 + y2) / 2 + 25}
+          y={(y1 + y2) / 2 + 35}
           fontSize={28}
           fontStyle="bold"
           fill={WALL_COLOR}
           fontFamily={FONT_FAMILY}
           rotation={-90}
+          width={70}
+          align="center"
         />
       </Group>
     );
@@ -599,7 +603,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
             y1={0}
             x2={plotPxWidth}
             y2={0}
-            label={plot.width.toString()}
+            label={unitCfg.formatDimRaw(plot.width)}
             outside="top"
             offset={DIM_OFFSET}
           />
@@ -610,7 +614,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
             y1={0}
             x2={0}
             y2={plotPxHeight}
-            label={plot.height.toString()}
+            label={unitCfg.formatDimRaw(plot.height)}
             outside="left"
             offset={DIM_OFFSET}
           />
@@ -622,7 +626,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
               y1={rightDimension.y1 * FEET_TO_PX}
               x2={rightDimension.x * FEET_TO_PX}
               y2={rightDimension.y2 * FEET_TO_PX}
-              label={rightDimension.height.toString()}
+              label={unitCfg.formatDimRaw(rightDimension.height)}
               outside="right"
               offset={DIM_OFFSET}
             />
@@ -680,7 +684,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                     y={-fontSizeTitle - 3}
                   />
                   <Text
-                    text={`${room.width}FT X ${room.height}FT.`}
+                    text={unitCfg.formatRoom(room.width, room.height)}
                     align="center"
                     fontSize={fontSizeDim}
                     fontStyle="bold"
@@ -865,7 +869,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 </span>
                 <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Door (D)</span>
               </div>
-              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>7' × 3'</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>{unitCfg.legendItems.door}</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
@@ -889,7 +893,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 </span>
                 <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Main Door (D1)</span>
               </div>
-              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>7' × 4.5'</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>{unitCfg.legendItems.mainDoor}</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
@@ -913,7 +917,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 </span>
                 <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Window (W)</span>
               </div>
-              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>4' × 3.2'</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>{unitCfg.legendItems.window}</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
@@ -937,7 +941,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 </span>
                 <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700' }}>Vent (V)</span>
               </div>
-              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>2' × 2'</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>{unitCfg.legendItems.vent}</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
@@ -953,7 +957,7 @@ const FloorPlan2D = ({ layout, theme = 'dark' }) => {
                 />
                 <span style={{ color: isDark ? '#ffffff' : '#000000', fontWeight: '700', marginLeft: '3px' }}>Column Pillar</span>
               </div>
-              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>10" × 10"</span>
+              <span style={{ color: isDark ? '#a1a1aa' : '#52525b', fontSize: '0.72rem', fontWeight: '500' }}>{unitCfg.legendItems.pillar}</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem' }}>
