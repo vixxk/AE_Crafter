@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Plus,
   Trash2,
-  Home,
   Box,
   RefreshCw,
   Layers,
@@ -87,9 +86,18 @@ const FloorPlanForm = ({ onGenerate, isGenerating, unit = 'feet', onUnitChange }
     <div className="sidebar">
       <div className="sidebar-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ background: 'var(--primary-color)', padding: '10px', borderRadius: '12px', display: 'flex', boxShadow: '0 4px 14px var(--primary-glow)' }}>
-            <Home size={24} color="white" />
-          </div>
+          <img
+            src="/favicon.png"
+            alt="AE-Crafter Logo"
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              objectFit: 'cover',
+              boxShadow: '0 4px 14px var(--primary-glow)',
+              flexShrink: 0,
+            }}
+          />
           <div>
             <h2 style={{ fontSize: '1.2rem', fontWeight: '900', color: 'var(--text-color)', letterSpacing: '-0.8px', textTransform: 'uppercase' }}>AE-Crafter</h2>
             <span style={{ fontSize: '0.65rem', color: 'var(--primary-color)', fontWeight: '800', letterSpacing: '1px' }}>ARCHITECTURAL ENGINE</span>
