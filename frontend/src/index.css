@@ -611,57 +611,148 @@ select option {
   }
 }
 
-/* ─── Canvas Zoom Slider Widget Styles ─── */
-.zoom-slider {
+/* ─── MS Word Style Single-Line Zoom Slider Styles ─── */
+.word-zoom-track-wrapper {
+  position: relative;
+  width: 110px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+/* The single thin line (like MS Word) */
+.word-zoom-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1.5px;
+  background: currentColor;
+  opacity: 0.38;
+  transform: translateY(-50%);
+  pointer-events: none;
+  border-radius: 1px;
+}
+
+/* Center 100% vertical notch/tick */
+.word-zoom-tick {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.5px;
+  height: 9px;
+  background: currentColor;
+  opacity: 0.55;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border-radius: 1px;
+}
+
+/* Native range input made transparent over the single line */
+.word-zoom-input {
   -webkit-appearance: none;
   appearance: none;
-  height: 5px;
-  border-radius: 9999px;
-  background: var(--border-color);
+  width: 100%;
+  height: 20px;
+  background: transparent;
   outline: none;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  margin: 0;
+  position: relative;
+  z-index: 2;
 }
 
-.zoom-slider::-webkit-slider-thumb {
+/* MS Word Vertical Notch Thumb */
+.word-zoom-input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
+  width: 4px;
   height: 14px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  box-shadow: 0 0 8px rgba(244, 114, 182, 0.4);
+  border-radius: 2px;
+  background: currentColor;
   cursor: pointer;
-  border: 2px solid var(--card-bg);
-  transition: transform 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform 0.12s ease;
 }
 
-.zoom-slider::-moz-range-thumb {
-  width: 14px;
+.word-zoom-input:hover::-webkit-slider-thumb,
+.word-zoom-input:active::-webkit-slider-thumb {
+  transform: scaleY(1.2);
+}
+
+.word-zoom-input::-moz-range-thumb {
+  width: 4px;
   height: 14px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  box-shadow: 0 0 8px rgba(244, 114, 182, 0.4);
+  border-radius: 2px;
+  background: currentColor;
+  border: none;
   cursor: pointer;
-  border: 2px solid var(--card-bg);
-  transition: transform 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform 0.12s ease;
 }
 
-.zoom-slider:hover::-webkit-slider-thumb {
-  transform: scale(1.22);
+.word-zoom-input:hover::-moz-range-thumb,
+.word-zoom-input:active::-moz-range-thumb {
+  transform: scaleY(1.2);
 }
 
-.zoom-slider:hover::-moz-range-thumb {
-  transform: scale(1.22);
+.word-zoom-input::-webkit-slider-runnable-track {
+  background: transparent;
+  border: none;
+  height: 20px;
 }
 
-.zoom-icon-btn:hover:not(:disabled) {
-  opacity: 1 !important;
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.08) !important;
+.word-zoom-input::-moz-range-track {
+  background: transparent;
+  border: none;
+  height: 20px;
 }
 
-.zoom-reset-btn:hover {
-  filter: brightness(1.2);
-  transform: scale(1.03);
+/* Word zoom minus/plus icon buttons */
+.word-zoom-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 4px;
+  border-radius: 4px;
+  opacity: 0.8;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
 }
+
+.word-zoom-btn:hover:not(:disabled) {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.15);
+}
+
+.word-zoom-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* Word percentage button */
+.word-zoom-percent-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 2px 4px;
+  min-width: 40px;
+  text-align: center;
+  border-radius: 4px;
+  opacity: 0.85;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.word-zoom-percent-btn:hover {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.15);
+}
+
 

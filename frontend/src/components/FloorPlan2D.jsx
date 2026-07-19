@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Rect, Text, Group, Line, Arc, Arrow } from 'react-konva';
-import { Layers, ChevronDown, ChevronUp, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { Layers, ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react';
 import { getUnitConfig } from '../utils/units';
 
 const FEET_TO_PX = 20;
@@ -9,6 +9,23 @@ const PILLAR_SIZE = 10;
 const DIM_OFFSET = 55;
 const DIM_TICK = 8;
 const FONT_FAMILY = 'Outfit, Arial, sans-serif';
+
+// MS Word style mapping: 50 is center (100% fit), 0 is 30% min, 100 is 300% max
+const zoomToSlider = (z) => {
+  if (z <= 1.0) {
+    return Math.max(0, Math.min(50, ((z - 0.3) / 0.7) * 50));
+  } else {
+    return Math.max(50, Math.min(100, 50 + ((z - 1.0) / 2.0) * 50));
+  }
+};
+
+const sliderToZoom = (v) => {
+  if (v <= 50) {
+    return Number((0.3 + (v / 50) * 0.7).toFixed(3));
+  } else {
+    return Number((1.0 + ((v - 50) / 50) * 2.0).toFixed(3));
+  }
+};
 
 const FloorPlan2D = ({ layout, theme = 'dark', unit = 'feet' }) => {
   const unitCfg = getUnitConfig(unit);
@@ -978,27 +995,28 @@ const FloorPlan2D = ({ layout, theme = 'dark', unit = 'feet' }) => {
         )}
       </div>
 
-      {/* ─── Zoom Controls Slider (Bottom Right of the Right Box) ───── */}
+      {/* ─── MS Word Style Single-Line Zoom Slider (Bottom Right) ───── */}
       <div
         data-html2canvas-ignore="true"
         style={{
           position: 'absolute',
-          bottom: '20px',
+          bottom: '18px',
           right: '20px',
           background: isDark ? 'rgba(17, 17, 22, 0.94)' : 'rgba(255, 255, 255, 0.98)',
-          border: `1.5px solid ${isDark ? 'rgba(255, 255, 255, 0.22)' : '#000000'}`,
-          borderRadius: '12px',
-          padding: '7px 12px',
+          border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.18)'}`,
+          borderRadius: '8px',
+          padding: '4px 10px',
           boxShadow: isDark
-            ? '0 12px 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08)'
-            : '0 8px 24px rgba(0, 0, 0, 0.12)',
-          backdropFilter: 'blur(12px)',
+            ? '0 8px 24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+            : '0 4px 16px rgba(0, 0, 0, 0.1)',
+          backdropFilter: 'blur(10px)',
           zIndex: 40,
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
           pointerEvents: 'auto',
           userSelect: 'none',
+          color: isDark ? '#ffffff' : '#000000',
         }}
       >
         {/* Zoom Out Button */}
@@ -1007,39 +1025,27 @@ const FloorPlan2D = ({ layout, theme = 'dark', unit = 'feet' }) => {
           onClick={() => handleZoomStep(-0.15)}
           disabled={zoom <= 0.3}
           title="Zoom Out"
-          className="zoom-icon-btn"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: isDark ? '#ffffff' : '#000000',
-            cursor: zoom <= 0.3 ? 'not-allowed' : 'pointer',
-            padding: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            opacity: zoom <= 0.3 ? 0.3 : 0.85,
-            transition: 'all 0.15s ease',
-          }}
+          className="word-zoom-btn"
         >
-          <ZoomOut size={16} />
+          <Minus size={13} strokeWidth={2.5} />
         </button>
 
-        {/* Range Slider */}
-        <input
-          type="range"
-          min="30"
-          max="300"
-          step="5"
-          value={Math.round(zoom * 100)}
-          onChange={(e) => handleZoomChange(Number(e.target.value) / 100)}
-          className="zoom-slider"
-          aria-label="Zoom Level"
-          title={`Zoom: ${Math.round(zoom * 100)}%`}
-          style={{
-            width: '110px',
-            accentColor: isDark ? '#f472b6' : '#db2777',
-            cursor: 'pointer',
-          }}
-        />
+        {/* MS Word Single Line Track & Slider Container */}
+        <div className="word-zoom-track-wrapper">
+          <div className="word-zoom-line" />
+          <div className="word-zoom-tick" title="100% (Default Fit)" />
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value={Math.round(zoomToSlider(zoom))}
+            onChange={(e) => handleZoomChange(sliderToZoom(Number(e.target.value)))}
+            className="word-zoom-input"
+            aria-label="Zoom Level"
+            title={`Zoom: ${Math.round(zoom * 100)}%`}
+          />
+        </div>
 
         {/* Zoom In Button */}
         <button
@@ -1047,56 +1053,19 @@ const FloorPlan2D = ({ layout, theme = 'dark', unit = 'feet' }) => {
           onClick={() => handleZoomStep(0.15)}
           disabled={zoom >= 3.0}
           title="Zoom In"
-          className="zoom-icon-btn"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: isDark ? '#ffffff' : '#000000',
-            cursor: zoom >= 3.0 ? 'not-allowed' : 'pointer',
-            padding: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            opacity: zoom >= 3.0 ? 0.3 : 0.85,
-            transition: 'all 0.15s ease',
-          }}
+          className="word-zoom-btn"
         >
-          <ZoomIn size={16} />
+          <Plus size={13} strokeWidth={2.5} />
         </button>
 
-        {/* Divider */}
-        <div
-          style={{
-            width: '1px',
-            height: '16px',
-            background: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.18)',
-            margin: '0 2px',
-          }}
-        />
-
-        {/* Reset to Fit (100%) */}
+        {/* Zoom Percentage (Click to Reset to 100%) */}
         <button
           type="button"
           onClick={handleResetZoom}
-          title="Reset to Fit (100%)"
-          className="zoom-reset-btn"
-          style={{
-            background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
-            border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'}`,
-            borderRadius: '6px',
-            padding: '3px 8px',
-            color: isDark ? '#ffffff' : '#000000',
-            fontSize: '0.74rem',
-            fontWeight: '700',
-            fontFamily: FONT_FAMILY,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            transition: 'all 0.15s ease',
-          }}
+          title="Click to Reset to 100% Fit"
+          className="word-zoom-percent-btn"
         >
-          <RotateCcw size={12} />
-          <span>{Math.round(zoom * 100)}%</span>
+          {Math.round(zoom * 100)}%
         </button>
       </div>
     </div>
