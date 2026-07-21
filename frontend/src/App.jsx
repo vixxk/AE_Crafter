@@ -8,7 +8,6 @@ import {
   Info,
   RefreshCcw,
   Maximize,
-  Database,
   Grid,
   Sun,
   Moon
@@ -265,10 +264,6 @@ function App() {
                   <option value="yards">Yards (yd)</option>
                 </select>
               </div>
-              <span style={{ fontSize: '12px', color: 'var(--border-color)' }}>|</span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Database size={12} /> Mode: {mode === 'ai' ? 'AI Enhanced' : 'Standard'}
-              </span>
             </div>
           </div>
 
